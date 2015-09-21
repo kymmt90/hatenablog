@@ -55,6 +55,9 @@ module Hatena
       update_entry(entry_id, xml: entry_xml(title, content, categories, draft))
     end
 
+    def delete_entry(entry_id)
+      delete(member_uri(entry_id: entry_id))
+    end
 
     private
 
@@ -89,6 +92,15 @@ module Hatena
           response = @access_token.put(uri, body, headers)
         rescue => problem
           raise 'Fail to PUT: ' + problem.request.body
+        end
+        response
+      end
+
+      def delete(uri, headers = { 'Content-Type' => 'application/atom+xml; type=entry' })
+        begin
+          response = @access_token.delete(uri, headers)
+        rescue => problem
+          raise 'Fail to DELETE: ' + problem.request.body
         end
         response
       end
