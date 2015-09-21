@@ -11,6 +11,7 @@ module Hatena
     DEFAULT_CONFIG_PATH = './hateblo4ruby.yml'
 
     COLLECTION_URI = "https://blog.hatena.ne.jp/%s/%s/atom/entry"
+    MEMBER_URI     = "https://blog.hatena.ne.jp/%s/%s/atom/entry/%s"
     CATEGORY_URI   = "https://blog.hatena.ne.jp/%s/%s/atom/category"
 
     def self.create(config_file = DEFAULT_CONFIG_PATH)
@@ -50,6 +51,10 @@ module Hatena
       post_entry(xml: entry_xml(title, content, categories, draft))
     end
 
+    def update(entry_id, title = '', content = '', categories = [], draft = 'no')
+      update_entry(entry_id, xml: entry_xml(title, content, categories, draft))
+    end
+
 
     private
 
@@ -79,6 +84,15 @@ module Hatena
         response
       end
 
+      def put(uri, body = '', headers = { 'Content-Type' => 'application/atom+xml; type=entry' } )
+        begin
+          response = @access_token.put(uri, body, headers)
+        rescue => problem
+          raise 'Fail to PUT: ' + problem.request.body
+        end
+        response
+      end
+
       def get_collection(uri = collection_uri)
         unless uri.include?(collection_uri)
           raise ArgumentError.new('Invalid collection URI: ' + uri)
@@ -94,8 +108,16 @@ module Hatena
         post(uri, xml)
       end
 
+      def update_entry(entry_id, xml: '')
+        put(member_uri(entry_id: entry_id), xml)
+      end
+
       def collection_uri(user_id = @user_id, blog_id = @blog_id)
         COLLECTION_URI % [user_id, blog_id]
+      end
+
+      def member_uri(user_id = @user_id, blog_id = @blog_id, entry_id: '')
+        MEMBER_URI % [user_id, blog_id, entry_id]
       end
 
       def category_doc_uri(user_id = @user_id, blog_id = @blog_id)
