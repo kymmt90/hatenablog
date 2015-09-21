@@ -47,6 +47,11 @@ module Hatena
       categories_list
     end
 
+    def get_entry(entry_id)
+      entry_doc = REXML::Document.new(get(member_uri(entry_id: entry_id)).body)
+      entry_doc.to_s
+    end
+
     def publish(title = '', content = '', categories = [], draft = 'no')
       post_entry(xml: entry_xml(title, content, categories, draft))
     end
