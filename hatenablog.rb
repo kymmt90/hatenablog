@@ -46,6 +46,30 @@ module Hatena
       categories_list
     end
 
+    def publish(title = '', content = '', categories = [], draft = 'no')
+      xml = <<XML
+<?xml version="1.0" encoding="utf-8"?>
+<entry xmlns="http://www.w3.org/2005/Atom"
+       xmlns:app="http://www.w3.org/2007/app">
+  <title>%s</title>
+  <author><name>%s</name></author>
+  <content type="text/x-markdown">
+    %s
+  </content>
+  %s
+  <app:control>
+    <app:draft>%s</app:draft>
+  </app:control>
+</entry>
+XML
+
+      categories_tag = categories.inject('') do |s, c|
+        s + "<category term=\"#{c}\" />\n"
+      end
+      xml = xml % [title, @user_id, content, categories_tag, draft]
+      post_entry(xml: xml)
+    end
+
 
     private
 
@@ -57,11 +81,20 @@ module Hatena
         @blog_id = blog_id
       end
 
-      def request(method, uri)
+      def get(uri)
         begin
-          response = @access_token.request(method, uri)
+          response = @access_token.get(uri)
         rescue => problem
-          raise 'Fail to request: ' + problem.request.body
+          raise 'Fail to GET: ' + problem.request.body
+        end
+        response
+      end
+
+      def post(uri, body = '', headers = { 'Content-Type' => 'application/atom+xml; type=entry' } )
+        begin
+          response = @access_token.post(uri, body, headers)
+        rescue => problem
+          raise 'Fail to POST: ' + problem.request.body
         end
         response
       end
@@ -70,11 +103,15 @@ module Hatena
         unless uri.include?(collection_uri)
           raise ArgumentError.new('Invalid collection URI: ' + uri)
         end
-        request(:get, uri)
+        get(uri)
       end
 
       def get_category_doc
-        request(:get, category_doc_uri)
+        get(category_doc_uri)
+      end
+
+      def post_entry(uri = collection_uri, xml: '')
+        post(uri, xml)
       end
 
       def collection_uri(user_id = @user_id, blog_id = @blog_id)

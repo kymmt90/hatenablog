@@ -11,3 +11,6 @@ puts "\n" + ('-' * 50)
 
 puts "\n# Categories\n"
 puts hatenablog.categories
+
+res = hatenablog.publish('test article', '# test header', ['test', 'diary'])
+puts res
