@@ -55,5 +55,54 @@ module Hatena
 XML
       assert_equal xml, sut_xml
     end
+
+    test 'generate draft entry XML' do
+      sut_xml = @@sut.send(:entry_xml,
+                           'test title',
+                           'This is test entry.',
+                           ['Ruby', 'Test'],
+                           'yes')
+      xml = <<XML
+<?xml version="1.0" encoding="utf-8"?>
+<entry xmlns="http://www.w3.org/2005/Atom"
+       xmlns:app="http://www.w3.org/2007/app">
+  <title>test title</title>
+  <author><name>test_user</name></author>
+  <content type="text/x-markdown">This is test entry.</content>
+  <category term="Ruby" />
+<category term="Test" />
+
+  <app:control>
+    <app:draft>yes</app:draft>
+  </app:control>
+</entry>
+XML
+      assert_equal xml, sut_xml
+    end
+
+    test 'generate draft entry XML with the author name' do
+      sut_xml = @@sut.send(:entry_xml,
+                           'test title',
+                           'This is test entry.',
+                           ['Ruby', 'Test'],
+                           'yes',
+                           'test_user_2')
+      xml = <<XML
+<?xml version="1.0" encoding="utf-8"?>
+<entry xmlns="http://www.w3.org/2005/Atom"
+       xmlns:app="http://www.w3.org/2007/app">
+  <title>test title</title>
+  <author><name>test_user_2</name></author>
+  <content type="text/x-markdown">This is test entry.</content>
+  <category term="Ruby" />
+<category term="Test" />
+
+  <app:control>
+    <app:draft>yes</app:draft>
+  </app:control>
+</entry>
+XML
+      assert_equal xml, sut_xml
+    end
   end
 end
