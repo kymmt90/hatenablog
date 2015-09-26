@@ -8,7 +8,7 @@ module Hatena
   class BlogEntryTest < Test::Unit::TestCase
     class << self
       def startup
-        xml = <<XML
+        @@xml = <<XML
 <?xml version='1.0' encoding='UTF-8'?>
 <entry xmlns:app='http://www.w3.org/2007/app' xmlns='http://www.w3.org/2005/Atom'>
 <id>tag:blog.hatena.ne.jp,2013:blog-test_user-6653458415121899222-6653458415122161047</id>
@@ -34,7 +34,7 @@ module Hatena
 
 </entry>
 XML
-        @@sut = BlogEntry.new(xml);
+        @@sut = BlogEntry.new(@@xml);
       end
 
       def shutdown
@@ -84,6 +84,10 @@ XML
 
     test 'get the content' do
       assert_equal 'This is the test entry.', @@sut.content
+    end
+
+    test 'get the XML representation' do
+      assert_equal @@xml, @@sut.to_xml
     end
   end
 end

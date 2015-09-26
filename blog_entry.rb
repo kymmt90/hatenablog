@@ -25,6 +25,10 @@ module Hatena
       end
     end
 
+    def to_xml
+      @document.to_s
+    end
+
 
     private
 
