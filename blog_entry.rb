@@ -10,6 +10,13 @@ module Hatena
       BlogEntry.new(xml)
     end
 
+    def self.create(uri: '', edit_uri: '', author_name: '', title: '',
+                    content: '', draft: 'no', categories: [])
+
+      BlogEntry.new(self.build_xml(uri, edit_uri, author_name, title,
+                                   content, draft, categories))
+    end
+
     def draft?
       @draft == 'yes'
     end
@@ -30,6 +37,28 @@ module Hatena
 
 
     private
+
+      def self.build_xml(uri, edit_uri, author_name, title, content, draft, categories)
+        xml = <<XML
+<?xml version='1.0' encoding='UTF-8'?>
+<entry xmlns:app='http://www.w3.org/2007/app' xmlns='http://www.w3.org/2005/Atom'>
+<link href='%s' rel='edit'/>
+<link href='%s' rel='alternate' type='text/html'/>
+<author><name>%s</name></author>
+<title>%s</title>
+<content type='text/x-markdown'>%s</content>
+%s
+<app:control>
+  <app:draft>%s</app:draft>
+</app:control>
+</entry>
+XML
+
+        categories_tag = categories.inject('') do |s, c|
+          s + "<category term=\"#{c}\" />\n"
+        end
+        xml % [edit_uri, uri, author_name, title, content, categories_tag, draft]
+      end
 
       def initialize(xml)
         @document = REXML::Document.new(xml)
