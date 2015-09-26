@@ -159,7 +159,7 @@ XML
         categories_tag = categories.inject('') do |s, c|
           s + "<category term=\"#{c}\" />\n"
         end
-        xml % [title, @user_id, content, categories_tag, draft]
+        xml % [title, author_name, content, categories_tag, draft]
       end
   end
 end
