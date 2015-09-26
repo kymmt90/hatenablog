@@ -4,6 +4,7 @@
 require 'rexml/document'
 require 'oauth'
 
+require './blog_entry'
 require './configuration'
 
 module Hatena
@@ -48,16 +49,20 @@ module Hatena
     end
 
     def get_entry(entry_id)
-      entry_doc = REXML::Document.new(get(member_uri(entry_id: entry_id)).body)
-      entry_doc.to_s
+      response = get(member_uri(entry_id: entry_id))
+      BlogEntry.load_xml(response.body)
     end
 
     def publish(title = '', content = '', categories = [], draft = 'no')
-      post_entry(xml: entry_xml(title, content, categories, draft))
+      entry = BlogEntry.load_xml(entry_xml(title, content, categories, draft))
+      response = post_entry(entry: entry)
+      BlogEntry.load_xml(response.body)
     end
 
     def update(entry_id, title = '', content = '', categories = [], draft = 'no')
-      update_entry(entry_id, xml: entry_xml(title, content, categories, draft))
+      entry = BlogEntry.load_xml(entry_xml(title, content, categories, draft))
+      response = update_entry(entry)
+      BlogEntry.load_xml(response.body)
     end
 
     def delete_entry(entry_id)
@@ -121,12 +126,12 @@ module Hatena
         get(category_doc_uri)
       end
 
-      def post_entry(uri = collection_uri, xml: '')
-        post(uri, xml)
+      def post_entry(uri = collection_uri, entry: nil)
+        post(uri, entry.to_xml)
       end
 
-      def update_entry(entry_id, xml: '')
-        put(member_uri(entry_id: entry_id), xml)
+      def update_entry(entry)
+        put(member_uri(entry_id: entry.id), entry.to_xml)
       end
 
       def collection_uri(user_id = @user_id, blog_id = @blog_id)
