@@ -6,9 +6,8 @@ module Hatena
   class BlogEntry
     attr_reader :uri, :edit_uri, :id, :author_name, :title, :content
 
-    def initialize(xml)
-      @document = REXML::Document.new(xml)
-      parse_document
+    def self.load_xml(xml)
+      BlogEntry.new(xml)
     end
 
     def draft?
@@ -31,6 +30,11 @@ module Hatena
 
 
     private
+
+      def initialize(xml)
+        @document = REXML::Document.new(xml)
+        parse_document
+      end
 
       def parse_document
         @uri = @document.elements["//link[@rel='alternate']"].attribute('href').to_s

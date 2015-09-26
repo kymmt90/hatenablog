@@ -44,7 +44,7 @@ module Hatena
 </app:control>
 </entry>
 XML
-        @sut = BlogEntry.new(@xml);
+        @sut = BlogEntry.load_xml(@xml);
       end
 
       test 'get the entry ID' do
