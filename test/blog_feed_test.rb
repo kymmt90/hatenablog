@@ -94,6 +94,12 @@ XML
       test 'the feed has the next feed' do
         assert_true @sut.has_next?
       end
+
+      test 'changing entries array does not influence to the original entries array' do
+        entries = @sut.entries
+        entries.pop
+        assert_not_equal entries, @sut.entries
+      end
     end
   end
 end

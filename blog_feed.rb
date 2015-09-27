@@ -12,6 +12,10 @@ module Hatena
       BlogFeed.new(xml)
     end
 
+    def entries
+      @entries.dup
+    end
+
     def each_entry
       @entries.each do |entry|
         yield entry
