@@ -18,6 +18,10 @@ module Hatena
       end
     end
 
+    def has_next?
+      @next_uri != ''
+    end
+
 
     private
 
@@ -28,7 +32,11 @@ module Hatena
 
       def parse_document
         @uri = @document.elements["/feed/link[@rel='alternate']"].attribute('href').to_s
-        @next_uri = @document.elements["/feed/link[@rel='next']"].attribute('href').to_s
+        @next_uri = if @document.elements["/feed/link[@rel='next']"].nil?
+                      ''
+                    else
+                      @document.elements["/feed/link[@rel='next']"].attribute('href').to_s
+                    end
         @title = @document.elements["/feed/title"].text
         @author_name = @document.elements["//author/name"].text
         @updated = Time.parse(@document.elements["/feed/updated"].text)

@@ -90,6 +90,10 @@ XML
           assert_equal 'This is the test entry.', entry.content
         end
       end
+
+      test 'the feed has the next feed' do
+        assert_true @sut.has_next?
+      end
     end
   end
 end
