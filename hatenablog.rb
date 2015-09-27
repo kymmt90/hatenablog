@@ -5,6 +5,7 @@ require 'rexml/document'
 require 'oauth'
 
 require './blog_entry'
+require './blog_feed'
 require './configuration'
 
 module Hatena
@@ -25,18 +26,16 @@ module Hatena
     def entries(page = 0)
       next_page_uri = collection_uri
       current_page = 0
-      contents = ""
+      entries = []
       while current_page <= page
-        feed = REXML::Document.new(get_collection(next_page_uri).body)
-        contents += feed.get_elements('//entry').inject('') do |s, e|
-          s + e.to_s
-        end
+        feed = BlogFeed.load_xml(get_collection(next_page_uri).body)
+        entries += feed.entries
 
-        break if feed.elements["//link[@rel='next']"].nil?
-        next_page_uri = feed.elements["//link[@rel='next']"].attribute('href').to_s
+        break unless feed.has_next?
+        next_page_uri = feed.next_uri
         current_page += 1
       end
-      contents
+      entries
     end
 
     def categories
