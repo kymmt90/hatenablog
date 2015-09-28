@@ -38,22 +38,8 @@ module Hatena
                            'test title',
                            'This is test entry.',
                            ['Ruby', 'Test'])
-      xml = <<XML
-<?xml version="1.0" encoding="utf-8"?>
-<entry xmlns="http://www.w3.org/2005/Atom"
-       xmlns:app="http://www.w3.org/2007/app">
-  <title>test title</title>
-  <author><name>test_user</name></author>
-  <content type="text/x-markdown">This is test entry.</content>
-  <category term="Ruby" />
-<category term="Test" />
-
-  <app:control>
-    <app:draft>no</app:draft>
-  </app:control>
-</entry>
-XML
-      assert_equal xml, sut_xml
+      f = File.open('test/fixture/generated_1.xml')
+      assert_equal f.read, sut_xml
     end
 
     test 'generate draft entry XML' do
@@ -62,22 +48,8 @@ XML
                            'This is test entry.',
                            ['Ruby', 'Test'],
                            'yes')
-      xml = <<XML
-<?xml version="1.0" encoding="utf-8"?>
-<entry xmlns="http://www.w3.org/2005/Atom"
-       xmlns:app="http://www.w3.org/2007/app">
-  <title>test title</title>
-  <author><name>test_user</name></author>
-  <content type="text/x-markdown">This is test entry.</content>
-  <category term="Ruby" />
-<category term="Test" />
-
-  <app:control>
-    <app:draft>yes</app:draft>
-  </app:control>
-</entry>
-XML
-      assert_equal xml, sut_xml
+      f = File.open('test/fixture/generated_2.xml')
+      assert_equal f.read, sut_xml
     end
 
     test 'generate draft entry XML with the author name' do
@@ -87,22 +59,8 @@ XML
                            ['Ruby', 'Test'],
                            'yes',
                            'test_user_2')
-      xml = <<XML
-<?xml version="1.0" encoding="utf-8"?>
-<entry xmlns="http://www.w3.org/2005/Atom"
-       xmlns:app="http://www.w3.org/2007/app">
-  <title>test title</title>
-  <author><name>test_user_2</name></author>
-  <content type="text/x-markdown">This is test entry.</content>
-  <category term="Ruby" />
-<category term="Test" />
-
-  <app:control>
-    <app:draft>yes</app:draft>
-  </app:control>
-</entry>
-XML
-      assert_equal xml, sut_xml
+      f = File.open('test/fixture/generated_3.xml')
+      assert_equal f.read, sut_xml
     end
   end
 end

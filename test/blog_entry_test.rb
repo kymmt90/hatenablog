@@ -22,28 +22,9 @@ module Hatena
 
     sub_test_case 'load the document from the XML text' do
       setup do
-        @xml = <<XML
-<?xml version='1.0' encoding='UTF-8'?>
-<entry xmlns:app='http://www.w3.org/2007/app' xmlns='http://www.w3.org/2005/Atom'>
-<id>tag:blog.hatena.ne.jp,2013:blog-test_user-6653458415121899222-6653458415122161047</id>
-<link href='https://blog.hatena.ne.jp/test_user/test-user.hatenablog.com/atom/entry/6653458415122161047' rel='edit'/>
-<link href='http://test-user.hatenablog.com/entry/2015/01/01/123456' rel='alternate' type='text/html'/>
-<author><name>test_user</name></author>
-<title>Test title</title>
-<updated>2015-01-01T12:34:56+09:00</updated>
-<published>2015-01-01T12:34:56+09:00</published>
-<app:edited>2015-01-01T12:34:56+09:00</app:edited>
-<summary type='text'>This is the test entry.</summary>
-<content type='text/x-markdown'>This is the test entry.</content>
-<hatena:formatted-content xmlns:hatena='http://www.hatena.ne.jp/info/xmlns#' type='text/html'>&lt;p&gt;This is the test entry.&lt;/p&gt;
-</hatena:formatted-content>
-<category term='Ruby'/>
-<category term='Test'/>
-<app:control>
-  <app:draft>no</app:draft>
-</app:control>
-</entry>
-XML
+        File.open('test/fixture/entry.xml') do |f|
+          @xml = f.read
+        end
         @sut = BlogEntry.load_xml(@xml);
       end
 

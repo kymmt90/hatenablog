@@ -15,17 +15,9 @@ module Hatena
     end
 
     def setup
-      @xml = <<XML
-<?xml version="1.0" encoding="utf-8"?>
-<app:categories
-    xmlns:app="http://www.w3.org/2007/app"
-    xmlns:atom="http://www.w3.org/2005/Atom"
-    fixed="yes">
-  <atom:category term="Perl" />
-  <atom:category term="Scala" />
-  <atom:category term="Ruby" />
-</app:categories>
-XML
+      File.open('test/fixture/categories.xml') do |f|
+        @xml = f.read
+      end
       @sut = BlogCategory.load_xml(@xml)
     end
 
