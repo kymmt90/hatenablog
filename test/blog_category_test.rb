@@ -6,22 +6,11 @@ require './blog_category'
 
 module Hatena
   class BlogCategoryTest < Test::Unit::TestCase
-    class << self
-      def startup
-      end
-
-      def shutdown
-      end
-    end
-
     def setup
       File.open('test/fixture/categories.xml') do |f|
         @xml = f.read
       end
       @sut = BlogCategory.load_xml(@xml)
-    end
-
-    def teardown
     end
 
     test 'get the categories list' do

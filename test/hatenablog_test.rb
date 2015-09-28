@@ -10,15 +10,6 @@ module Hatena
       def startup
         @@sut = HatenaBlog.create('test/fixture/test_conf.yml')
       end
-
-      def shutdown
-      end
-    end
-
-    def setup
-    end
-
-    def teardown
     end
 
     test 'collection URI' do

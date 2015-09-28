@@ -6,20 +6,6 @@ require './blog_feed'
 
 module Hatena
   class BlogFeedTest < Test::Unit::TestCase
-    class << self
-      def startup
-      end
-
-      def shutdown
-      end
-    end
-
-    def setup
-    end
-
-    def teardown
-    end
-
     sub_test_case 'load the feed from the XML text' do
       setup do
         File.open('test/fixture/feed_1.xml') do |f|

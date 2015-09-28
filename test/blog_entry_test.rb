@@ -6,20 +6,6 @@ require './blog_entry'
 
 module Hatena
   class BlogEntryTest < Test::Unit::TestCase
-    class << self
-      def startup
-      end
-
-      def shutdown
-      end
-    end
-
-    def setup
-    end
-
-    def teardown
-    end
-
     sub_test_case 'load the document from the XML text' do
       setup do
         File.open('test/fixture/entry.xml') do |f|
