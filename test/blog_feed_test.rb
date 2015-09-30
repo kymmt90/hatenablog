@@ -55,5 +55,22 @@ module Hatena
         assert_not_equal entries, @sut.entries
       end
     end
+
+    sub_test_case 'load the feed from the XML text' do
+      setup do
+        File.open('test/fixture/feed_2.xml') do |f|
+          @xml = f.read
+        end
+        @sut = BlogFeed.load_xml(@xml)
+      end
+
+      test 'the next feed URI is empty' do
+        assert_empty @sut.next_uri
+      end
+
+      test 'the feed does not have the next feed' do
+        assert_false @sut.has_next?
+      end
+    end
   end
 end

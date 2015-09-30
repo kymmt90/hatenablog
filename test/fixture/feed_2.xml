@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"
+      xmlns:app="http://www.w3.org/2007/app">
+  <link rel="first" href="https://blog.hatena.ne.jp/test_user}/test-user.hatenablog.coym/atom/entry" />
+  <title>Test Blog</title>
+  <link rel="alternate" href="http://test-user.hatenablog.com/"/>
+  <updated>2015-01-01T12:34:56+09:00</updated>
+  <author>
+    <name>test_user</name>
+  </author>
+  <generator uri="http://blog.hatena.ne.jp/" version="100000000">Hatena::Blog</generator>
+  <id>hatenablog://blog/2000000000000</id>
+
+  <entry>
+    <id>tag:blog.hatena.ne.jp,2013:blog-test_user-20000000000000-3000000000000000</id>
+    <link rel="edit" href="https://blog.hatena.ne.jp/test_user/test-user.hatenablog.com/atom/edit/2500000000"/>
+    <link rel="alternate" type="text/html" href="http://test-user.hatenablog.com/entry/2013/09/02/112823"/>
+    <author><name>test_user</name></author>
+    <title>Test title</title>
+    <updated>2015-01-01T12:34:56+09:00</updated>
+    <published>2015-01-01T12:34:56+09:00</published>
+    <app:edited>2015-01-01T12:34:56+09:00</app:edited>
+    <summary type="text">This is the test entry.</summary>
+    <content type="text/x-markdown">This is the test entry.</content>
+    <hatena:formatted-content xmlns:hatena='http://www.hatena.ne.jp/info/xmlns#' type='text/html'>&lt;p&gt;This is the test entry.&lt;/p&gt;
+    </hatena:formatted-content>
+    <app:control>
+      <app:draft>no</app:draft>
+    </app:control>
+  </entry>
+</feed>
