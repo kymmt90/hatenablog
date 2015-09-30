@@ -6,34 +6,49 @@ require './blog_category'
 
 module Hatena
   class BlogCategoryTest < Test::Unit::TestCase
-    def setup
-      File.open('test/fixture/categories.xml') do |f|
-        @xml = f.read
+    sub_test_case 'attribute "fixed" is "yes"' do
+      setup do
+        File.open('test/fixture/categories_1.xml') do |f|
+          @xml = f.read
+        end
+        @sut = BlogCategory.load_xml(@xml)
       end
-      @sut = BlogCategory.load_xml(@xml)
-    end
 
-    test 'get the categories list' do
-      assert_equal ['Perl', 'Scala', 'Ruby'], @sut.categories
-    end
+      test 'get the categories list' do
+        assert_equal ['Perl', 'Scala', 'Ruby'], @sut.categories
+      end
 
-    test 'changing the categories array does not influence to the original categories array' do
+      test 'changing the categories array does not influence to the original categories array' do
         categories = @sut.categories
         categories << 'Rails'
         categories[1] = 'Sinatra'
         assert_not_equal categories, @sut.categories
-    end
-
-    test 'get each category' do
-      categories = []
-      @sut.each do |category|
-        categories << category
       end
-      assert_equal ['Perl', 'Scala', 'Ruby'], categories
+
+      test 'get each category' do
+        categories = []
+        @sut.each do |category|
+          categories << category
+        end
+        assert_equal ['Perl', 'Scala', 'Ruby'], categories
+      end
+
+      test 'the categories list is fixed' do
+        assert_true @sut.fixed?
+      end
     end
 
-    test 'the categories list is fixed' do
-      assert_true @sut.fixed?
+    sub_test_case 'attribute "fixed" is not exist' do
+      setup do
+        File.open('test/fixture/categories_2.xml') do |f|
+          @xml = f.read
+        end
+        @sut = BlogCategory.load_xml(@xml)
+      end
+
+      test 'the categories list is not fixed' do
+        assert_false @sut.fixed?
+      end
     end
   end
 end
