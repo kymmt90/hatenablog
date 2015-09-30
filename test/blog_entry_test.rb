@@ -56,6 +56,14 @@ module Hatena
       test 'get the XML representation' do
         assert_equal @xml, @sut.to_xml
       end
+
+      test 'get each category' do
+        actual = []
+        @sut.each_category do |category|
+          actual << category
+        end
+        assert_equal ['Ruby', 'Test'], actual
+      end
     end
 
     sub_test_case 'build from initialize arguments' do
@@ -95,6 +103,14 @@ module Hatena
 
       test 'get categores' do
         assert_equal ['Ruby', 'Test'], @sut.categories
+      end
+
+      test 'get each category' do
+        actual = []
+        @sut.each_category do |category|
+          actual << category
+        end
+        assert_equal ['Ruby', 'Test'], actual
       end
     end
   end
