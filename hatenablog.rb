@@ -10,7 +10,7 @@ require './configuration'
 
 module Hatena
   class HatenaBlog
-    DEFAULT_CONFIG_PATH = './hateblo4ruby.yml'
+    DEFAULT_CONFIG_PATH = './config.yml'
 
     COLLECTION_URI = "https://blog.hatena.ne.jp/%s/%s/atom/entry"
     MEMBER_URI     = "https://blog.hatena.ne.jp/%s/%s/atom/entry/%s"
