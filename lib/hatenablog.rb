@@ -17,9 +17,11 @@ class Hatenablog
 
   def self.create(config_file = DEFAULT_CONFIG_PATH)
     config = Configuration.new(config_file)
-    Hatenablog.new(config.consumer_key, config.consumer_secret,
+    blog = Hatenablog.new(config.consumer_key, config.consumer_secret,
                           config.access_token, config.access_token_secret,
                           config.user_id, config.blog_id)
+    return blog unless block_given?
+    yield blog
   end
 
   def entries(page = 0)
