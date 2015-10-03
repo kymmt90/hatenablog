@@ -54,8 +54,8 @@ class Hatenablog
   end
 
   def post_entry(title = '', content = '', categories = [], draft = 'no')
-    entry = BlogEntry.load_xml(entry_xml(title, content, categories, draft))
-    response = post(entry: entry)
+    entry_xml = entry_xml(title, content, categories, draft)
+    response = post(entry_xml: entry_xml)
     BlogEntry.load_xml(response.body)
   end
 
@@ -95,8 +95,8 @@ class Hatenablog
     get(category_doc_uri)
   end
 
-  def post(uri = collection_uri, entry: nil)
-    oauth_post(uri, entry.to_xml)
+  def post(uri = collection_uri, entry_xml: '')
+    oauth_post(uri, entry_xml)
   end
 
   def put(uri, entry_xml)
