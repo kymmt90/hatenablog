@@ -66,7 +66,7 @@ class Hatenablog
   end
 
   def delete_entry(entry_id)
-    oauth_delete(member_uri(entry_id: entry_id))
+    delete(member_uri(entry_id: entry_id))
   end
 
   private
@@ -136,6 +136,10 @@ class Hatenablog
 
   def put(entry)
     oauth_put(member_uri(entry_id: entry.id), entry.to_xml)
+  end
+
+  def delete(uri)
+    oauth_delete(uri)
   end
 
   def collection_uri(user_id = @user_id, blog_id = @blog_id)
