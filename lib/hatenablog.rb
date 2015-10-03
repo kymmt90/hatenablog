@@ -69,6 +69,40 @@ class Hatenablog
     delete(member_uri(entry_id: entry_id))
   end
 
+  def collection_uri(user_id = @user_id, blog_id = @blog_id)
+    COLLECTION_URI % [user_id, blog_id]
+  end
+
+  def member_uri(user_id = @user_id, blog_id = @blog_id, entry_id: '')
+    MEMBER_URI % [user_id, blog_id, entry_id]
+  end
+
+  def category_doc_uri(user_id = @user_id, blog_id = @blog_id)
+    CATEGORY_URI % [user_id, blog_id]
+  end
+
+  def entry_xml(title = '', content = '', categories = [], draft = 'no', author_name = @user_id)
+    xml = <<XML
+<?xml version="1.0" encoding="utf-8"?>
+<entry xmlns="http://www.w3.org/2005/Atom"
+       xmlns:app="http://www.w3.org/2007/app">
+  <title>%s</title>
+  <author><name>%s</name></author>
+  <content type="text/x-markdown">%s</content>
+  %s
+  <app:control>
+    <app:draft>%s</app:draft>
+  </app:control>
+</entry>
+XML
+
+    categories_tag = categories.inject('') do |s, c|
+      s + "<category term=\"#{c}\" />\n"
+    end
+    xml % [title, author_name, content, categories_tag, draft]
+  end
+
+
   private
 
   def initialize(consumer_key, consumer_secret, access_token, access_token_secret,
@@ -141,39 +175,5 @@ class Hatenablog
       raise 'Fail to DELETE: ' + problem.request.body
     end
     response
-  end
-
-
-  def collection_uri(user_id = @user_id, blog_id = @blog_id)
-    COLLECTION_URI % [user_id, blog_id]
-  end
-
-  def member_uri(user_id = @user_id, blog_id = @blog_id, entry_id: '')
-    MEMBER_URI % [user_id, blog_id, entry_id]
-  end
-
-  def category_doc_uri(user_id = @user_id, blog_id = @blog_id)
-    CATEGORY_URI % [user_id, blog_id]
-  end
-
-  def entry_xml(title = '', content = '', categories = [], draft = 'no', author_name = @user_id)
-    xml = <<XML
-<?xml version="1.0" encoding="utf-8"?>
-<entry xmlns="http://www.w3.org/2005/Atom"
-       xmlns:app="http://www.w3.org/2007/app">
-  <title>%s</title>
-  <author><name>%s</name></author>
-  <content type="text/x-markdown">%s</content>
-  %s
-  <app:control>
-    <app:draft>%s</app:draft>
-  </app:control>
-</entry>
-XML
-
-    categories_tag = categories.inject('') do |s, c|
-      s + "<category term=\"#{c}\" />\n"
-    end
-    xml % [title, author_name, content, categories_tag, draft]
   end
 end
