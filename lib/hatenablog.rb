@@ -79,6 +79,34 @@ class Hatenablog
     @blog_id = blog_id
   end
 
+
+  def get(uri)
+    oauth_get(uri)
+  end
+
+  def get_collection(uri = collection_uri)
+    unless uri.include?(collection_uri)
+      raise ArgumentError.new('Invalid collection URI: ' + uri)
+    end
+    get(uri)
+  end
+
+  def get_category_doc
+    get(category_doc_uri)
+  end
+
+  def post(uri = collection_uri, entry: nil)
+    oauth_post(uri, entry.to_xml)
+  end
+
+  def put(entry)
+    oauth_put(member_uri(entry_id: entry.id), entry.to_xml)
+  end
+
+  def delete(uri)
+    oauth_delete(uri)
+  end
+
   def oauth_get(uri)
     begin
       response = @access_token.get(uri)
@@ -115,32 +143,6 @@ class Hatenablog
     response
   end
 
-  def get(uri)
-    oauth_get(uri)
-  end
-
-  def get_collection(uri = collection_uri)
-    unless uri.include?(collection_uri)
-      raise ArgumentError.new('Invalid collection URI: ' + uri)
-    end
-    get(uri)
-  end
-
-  def get_category_doc
-    get(category_doc_uri)
-  end
-
-  def post(uri = collection_uri, entry: nil)
-    oauth_post(uri, entry.to_xml)
-  end
-
-  def put(entry)
-    oauth_put(member_uri(entry_id: entry.id), entry.to_xml)
-  end
-
-  def delete(uri)
-    oauth_delete(uri)
-  end
 
   def collection_uri(user_id = @user_id, blog_id = @blog_id)
     COLLECTION_URI % [user_id, blog_id]
