@@ -60,8 +60,8 @@ class Hatenablog
   end
 
   def update_entry(entry_id, title = '', content = '', categories = [], draft = 'no')
-    entry = BlogEntry.load_xml(entry_xml(title, content, categories, draft))
-    response = put(entry)
+    entry_xml = entry_xml(title, content, categories, draft)
+    response = put(member_uri(entry_id: entry_id), entry_xml)
     BlogEntry.load_xml(response.body)
   end
 
@@ -99,8 +99,8 @@ class Hatenablog
     oauth_post(uri, entry.to_xml)
   end
 
-  def put(entry)
-    oauth_put(member_uri(entry_id: entry.id), entry.to_xml)
+  def put(uri, entry_xml)
+    oauth_put(uri, entry_xml)
   end
 
   def delete(uri)
