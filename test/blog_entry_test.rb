@@ -30,7 +30,7 @@ class BlogEntryTest < Test::Unit::TestCase
     end
 
     test 'get the edit URI' do
-      assert_equal 'https://blog.hatena.ne.jp/test_user/test-user.hatenablog.com/atom/entry/6653458415122161047', @sut.edit_uri
+      assert_equal 'https://blog.hatena.ne.jp/test_user/test-user.hatenablog.com/atom/edit/6653458415122161047', @sut.edit_uri
     end
 
     test 'this entry is not draft' do
