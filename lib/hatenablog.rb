@@ -26,6 +26,11 @@ class Hatenablog
     yield blog
   end
 
+  def title
+    feed = BlogFeed.load_xml(get_collection(collection_uri).body)
+    feed.title
+  end
+
   def entries(page = 0)
     next_page_uri = collection_uri
     current_page = 0

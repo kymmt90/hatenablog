@@ -6,6 +6,26 @@ require 'test/unit/rr'
 require 'hatenablog'
 
 class HatenablogTest < Test::Unit::TestCase
+  sub_test_case 'get feed' do
+    setup do
+      setup_feed
+    end
+
+    test 'get the blog title' do
+      assert_equal 'Test Blog', @sut.title
+    end
+
+    def setup_feed
+      @sut = Hatenablog.create('test/fixture/test_conf.yml')
+      access_token = Object.new
+      response = Object.new
+      f = File.open('test/fixture/feed_1.xml')
+      stub(response).body { f.read }
+      stub(access_token).get { response }
+      @sut.access_token = access_token
+    end
+  end
+
   sub_test_case 'get entry' do
     setup do
       setup_entry
