@@ -109,15 +109,18 @@ XML
 
   def initialize(consumer_key, consumer_secret, access_token, access_token_secret,
                  user_id, blog_id)
-    @consumer = OAuth::Consumer.new(consumer_key, consumer_secret)
-    @access_token = OAuth::AccessToken.new(@consumer, access_token, access_token_secret)
+    consumer = OAuth::Consumer.new(consumer_key, consumer_secret)
+    @access_token = OAuthAccessToken.new(OAuth::AccessToken.new(consumer,
+                                                                access_token,
+                                                                access_token_secret))
+
     @user_id = user_id
     @blog_id = blog_id
   end
 
 
   def get(uri)
-    oauth_get(uri)
+    @access_token.get(uri)
   end
 
   def get_collection(uri = collection_uri)
@@ -132,18 +135,24 @@ XML
   end
 
   def post(uri = collection_uri, entry_xml: '')
-    oauth_post(uri, entry_xml)
+    @access_token.post(uri, entry_xml)
   end
 
   def put(uri, entry_xml)
-    oauth_put(uri, entry_xml)
+    @access_token.put(uri, entry_xml)
   end
 
   def delete(uri)
-    oauth_delete(uri)
+    @access_token.delete(uri)
+  end
+end
+
+class OAuthAccessToken
+  def initialize(access_token)
+    @access_token = access_token
   end
 
-  def oauth_get(uri)
+  def get(uri)
     begin
       response = @access_token.get(uri)
     rescue => problem
@@ -152,7 +161,9 @@ XML
     response
   end
 
-  def oauth_post(uri, body = '', headers = { 'Content-Type' => 'application/atom+xml; type=entry' } )
+  def post(uri,
+           body = '',
+           headers = { 'Content-Type' => 'application/atom+xml; type=entry' } )
     begin
       response = @access_token.post(uri, body, headers)
     rescue => problem
@@ -161,7 +172,9 @@ XML
     response
   end
 
-  def oauth_put(uri, body = '', headers = { 'Content-Type' => 'application/atom+xml; type=entry' } )
+  def put(uri,
+          body = '',
+          headers = { 'Content-Type' => 'application/atom+xml; type=entry' } )
     begin
       response = @access_token.put(uri, body, headers)
     rescue => problem
@@ -170,7 +183,8 @@ XML
     response
   end
 
-  def oauth_delete(uri, headers = { 'Content-Type' => 'application/atom+xml; type=entry' })
+  def delete(uri,
+             headers = { 'Content-Type' => 'application/atom+xml; type=entry' })
     begin
       response = @access_token.delete(uri, headers)
     rescue => problem
