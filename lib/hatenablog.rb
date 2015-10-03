@@ -49,24 +49,24 @@ class Hatenablog
   end
 
   def get_entry(entry_id)
-    response = get(member_uri(entry_id: entry_id))
+    response = oauth_get(member_uri(entry_id: entry_id))
     BlogEntry.load_xml(response.body)
   end
 
-  def publish(title = '', content = '', categories = [], draft = 'no')
+  def post_entry(title = '', content = '', categories = [], draft = 'no')
     entry = BlogEntry.load_xml(entry_xml(title, content, categories, draft))
-    response = post_entry(entry: entry)
+    response = post(entry: entry)
     BlogEntry.load_xml(response.body)
   end
 
-  def update(entry_id, title = '', content = '', categories = [], draft = 'no')
+  def update_entry(entry_id, title = '', content = '', categories = [], draft = 'no')
     entry = BlogEntry.load_xml(entry_xml(title, content, categories, draft))
-    response = update_entry(entry)
+    response = put(entry)
     BlogEntry.load_xml(response.body)
   end
 
   def delete_entry(entry_id)
-    delete(member_uri(entry_id: entry_id))
+    oauth_delete(member_uri(entry_id: entry_id))
   end
 
   private
@@ -79,7 +79,7 @@ class Hatenablog
     @blog_id = blog_id
   end
 
-  def get(uri)
+  def oauth_get(uri)
     begin
       response = @access_token.get(uri)
     rescue => problem
@@ -88,7 +88,7 @@ class Hatenablog
     response
   end
 
-  def post(uri, body = '', headers = { 'Content-Type' => 'application/atom+xml; type=entry' } )
+  def oauth_post(uri, body = '', headers = { 'Content-Type' => 'application/atom+xml; type=entry' } )
     begin
       response = @access_token.post(uri, body, headers)
     rescue => problem
@@ -97,7 +97,7 @@ class Hatenablog
     response
   end
 
-  def put(uri, body = '', headers = { 'Content-Type' => 'application/atom+xml; type=entry' } )
+  def oauth_put(uri, body = '', headers = { 'Content-Type' => 'application/atom+xml; type=entry' } )
     begin
       response = @access_token.put(uri, body, headers)
     rescue => problem
@@ -106,7 +106,7 @@ class Hatenablog
     response
   end
 
-  def delete(uri, headers = { 'Content-Type' => 'application/atom+xml; type=entry' })
+  def oauth_delete(uri, headers = { 'Content-Type' => 'application/atom+xml; type=entry' })
     begin
       response = @access_token.delete(uri, headers)
     rescue => problem
@@ -119,19 +119,19 @@ class Hatenablog
     unless uri.include?(collection_uri)
       raise ArgumentError.new('Invalid collection URI: ' + uri)
     end
-    get(uri)
+    oauth_get(uri)
   end
 
   def get_category_doc
-    get(category_doc_uri)
+    oauth_get(category_doc_uri)
   end
 
-  def post_entry(uri = collection_uri, entry: nil)
-    post(uri, entry.to_xml)
+  def post(uri = collection_uri, entry: nil)
+    oauth_post(uri, entry.to_xml)
   end
 
-  def update_entry(entry)
-    put(member_uri(entry_id: entry.id), entry.to_xml)
+  def put(entry)
+    oauth_put(member_uri(entry_id: entry.id), entry.to_xml)
   end
 
   def collection_uri(user_id = @user_id, blog_id = @blog_id)
