@@ -6,7 +6,7 @@ require 'test/unit/rr'
 require 'hatenablog'
 
 class HatenablogTest < Test::Unit::TestCase
-  sub_test_case 'get feed' do
+  sub_test_case 'get the single page feed' do
     setup do
       setup_feed
     end
@@ -19,6 +19,14 @@ class HatenablogTest < Test::Unit::TestCase
       assert_equal 'test_user', @sut.author_name
     end
 
+    test 'the entries size is 1' do
+      assert_equal 1, @sut.entries.length
+    end
+
+    test 'get the entry' do
+      assert_equal "2500000000", @sut.entries[0].id
+    end
+
     def setup_feed
       @sut = Hatenablog.create('test/fixture/test_conf.yml')
       access_token = Object.new
@@ -26,6 +34,39 @@ class HatenablogTest < Test::Unit::TestCase
       f = File.open('test/fixture/feed_1.xml')
       stub(response).body { f.read }
       stub(access_token).get { response }
+      @sut.access_token = access_token
+    end
+  end
+
+  sub_test_case 'get the multiple feeds' do
+    setup do
+      setup_feeds
+      @got_entries = @sut.entries(1)
+    end
+
+    test 'the entries size is 2' do
+      assert_equal 2, @got_entries.length
+    end
+
+    test 'get the first entry' do
+      assert_equal "2500000000", @got_entries[0].id
+    end
+
+    test 'get the second entry' do
+      assert_equal "2500000000", @got_entries[1].id
+    end
+
+    def setup_feeds
+      @sut = Hatenablog.create('test/fixture/test_conf.yml')
+      response1    = Object.new
+      response2    = Object.new
+      access_token = Object.new
+      f1 = File.open('test/fixture/feed_1.xml')
+      f2 = File.open('test/fixture/feed_2.xml')
+      stub(response1).body { f1.read }
+      stub(response2).body { f2.read }
+      stub(access_token).get(@sut.collection_uri) { response1 }
+      stub(access_token).get('https://blog.hatena.ne.jp/test_user/test-user.hatenablog.com/atom/entry?page=1377584217') { response2 }
       @sut.access_token = access_token
     end
   end
@@ -67,6 +108,63 @@ class HatenablogTest < Test::Unit::TestCase
       f = File.open('test/fixture/entry.xml')
       stub(response).body { f.read }
       stub(access_token).get { response }
+      @sut.access_token = access_token
+    end
+  end
+
+  sub_test_case 'post the entry' do
+    setup do
+      setup_post_entry_mock
+    end
+
+    test 'post' do
+      @sut.post_entry
+    end
+
+    def setup_post_entry_mock
+      @sut = Hatenablog.create('test/fixture/test_conf.yml')
+      response     = Object.new
+      access_token = Object.new
+      f = File.open('test/fixture/entry.xml')
+      mock(response).body { f.read }
+      mock(access_token).post(@sut.collection_uri, @sut.entry_xml) { response }
+      @sut.access_token = access_token
+    end
+  end
+
+  sub_test_case 'update the entry' do
+    setup do
+      setup_update_entry_mock
+    end
+
+    test 'update' do
+      @sut.update_entry('6653458415122161047')
+    end
+
+    def setup_update_entry_mock
+      @sut = Hatenablog.create('test/fixture/test_conf.yml')
+      response     = Object.new
+      access_token = Object.new
+      f = File.open('test/fixture/entry.xml')
+      mock(response).body { f.read }
+      mock(access_token).put(@sut.member_uri(entry_id: '6653458415122161047'), @sut.entry_xml) { response }
+      @sut.access_token = access_token
+    end
+  end
+
+  sub_test_case 'delete the entry' do
+    setup do
+      setup_delete_entry_mock
+    end
+
+    test 'delete' do
+      @sut.delete_entry('6653458415122161047')
+    end
+
+    def setup_delete_entry_mock
+      @sut = Hatenablog.create('test/fixture/test_conf.yml')
+      access_token = Object.new
+      mock(access_token).delete(@sut.member_uri(entry_id: '6653458415122161047'))
       @sut.access_token = access_token
     end
   end
