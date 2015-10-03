@@ -32,6 +32,6 @@ class ConfigurationTest < Test::Unit::TestCase
   end
 
   test 'blog ID' do
-    assert_equal 'example.com', @@sut.blog_id
+    assert_equal 'test-user.hatenablog.com', @@sut.blog_id
   end
 end

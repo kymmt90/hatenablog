@@ -196,15 +196,15 @@ class HatenablogTest < Test::Unit::TestCase
     end
 
     test 'collection URI' do
-      assert_equal 'https://blog.hatena.ne.jp/test_user/example.com/atom/entry', @sut.collection_uri
+      assert_equal 'https://blog.hatena.ne.jp/test_user/test-user.hatenablog.com/atom/entry', @sut.collection_uri
     end
 
     test 'member URI' do
-      assert_equal 'https://blog.hatena.ne.jp/test_user/example.com/atom/entry/6653458415122161047', @sut.member_uri(entry_id: '6653458415122161047')
+      assert_equal 'https://blog.hatena.ne.jp/test_user/test-user.hatenablog.com/atom/entry/6653458415122161047', @sut.member_uri(entry_id: '6653458415122161047')
     end
 
     test 'category document URI' do
-      assert_equal 'https://blog.hatena.ne.jp/test_user/example.com/atom/category', @sut.category_doc_uri
+      assert_equal 'https://blog.hatena.ne.jp/test_user/test-user.hatenablog.com/atom/category', @sut.category_doc_uri
     end
 
     test 'generate entry XML' do

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom"
       xmlns:app="http://www.w3.org/2007/app">
-  <link rel="first" href="https://blog.hatena.ne.jp/test_user}/test-user.hatenablog.com/atom/entry" />
+  <link rel="first" href="https://blog.hatena.ne.jp/test_user/test-user.hatenablog.com/atom/entry" />
   <link rel="next" href="https://blog.hatena.ne.jp/test_user/test-user.hatenablog.com/atom/entry?page=1377584217" />
   <title>Test Blog</title>
   <link rel="alternate" href="http://test-user.hatenablog.com/"/>
