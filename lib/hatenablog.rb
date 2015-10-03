@@ -15,6 +15,8 @@ class Hatenablog
   MEMBER_URI     = "https://blog.hatena.ne.jp/%s/%s/atom/entry/%s"
   CATEGORY_URI   = "https://blog.hatena.ne.jp/%s/%s/atom/category"
 
+  attr_writer :access_token
+
   def self.create(config_file = DEFAULT_CONFIG_PATH)
     config = Configuration.new(config_file)
     blog = Hatenablog.new(config.consumer_key, config.consumer_secret,
