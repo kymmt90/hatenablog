@@ -1,10 +1,73 @@
 # coding: utf-8
 
 require 'test/unit'
+require 'test/unit/rr'
 
 require 'hatenablog'
 
 class HatenablogTest < Test::Unit::TestCase
+  sub_test_case 'get entry' do
+    setup do
+      setup_entry
+      @got_entry = @sut.get_entry('6653458415122161047')
+    end
+
+    test 'get the entry ID' do
+      assert_equal '6653458415122161047', @got_entry.id
+    end
+
+    test 'get the author name' do
+      assert_equal 'test_user', @got_entry.author_name
+    end
+
+    test 'get the title' do
+      assert_equal 'Test title', @got_entry.title
+    end
+
+    test 'get the URI' do
+      assert_equal 'http://test-user.hatenablog.com/entry/2015/01/01/123456', @got_entry.uri
+    end
+
+    test 'get the edit URI' do
+      assert_equal 'https://blog.hatena.ne.jp/test_user/test-user.hatenablog.com/atom/edit/6653458415122161047', @got_entry.edit_uri
+    end
+
+    test 'this entry is not draft' do
+      assert_false @got_entry.draft?
+    end
+
+    def setup_entry
+      @sut = Hatenablog.create('test/fixture/test_conf.yml')
+      access_token = Object.new
+      response = Object.new
+      f = File.open('test/fixture/entry.xml')
+      stub(response).body { f.read }
+      stub(access_token).get { response }
+      @sut.access_token = access_token
+    end
+  end
+
+  sub_test_case 'get categories' do
+    setup do
+      setup_categories
+      @got_categories = @sut.categories
+    end
+
+    test 'get categories' do
+      assert_equal ['Perl', 'Scala', 'Ruby'], @got_categories
+    end
+
+    def setup_categories
+      @sut = Hatenablog.create('test/fixture/test_conf.yml')
+      access_token = Object.new
+      response = Object.new
+      f = File.open('test/fixture/categories_1.xml')
+      stub(response).body { f.read }
+      stub(access_token).get { response }
+      @sut.access_token = access_token
+    end
+  end
+
   sub_test_case 'helper methods' do
     setup do
       @sut = Hatenablog.create('test/fixture/test_conf.yml')
