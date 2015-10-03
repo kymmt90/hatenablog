@@ -15,6 +15,10 @@ class HatenablogTest < Test::Unit::TestCase
       assert_equal 'Test Blog', @sut.title
     end
 
+    test 'get the blog author name' do
+      assert_equal 'test_user', @sut.author_name
+    end
+
     def setup_feed
       @sut = Hatenablog.create('test/fixture/test_conf.yml')
       access_token = Object.new
