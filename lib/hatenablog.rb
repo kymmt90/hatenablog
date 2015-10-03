@@ -49,7 +49,7 @@ class Hatenablog
   end
 
   def get_entry(entry_id)
-    response = oauth_get(member_uri(entry_id: entry_id))
+    response = get(member_uri(entry_id: entry_id))
     BlogEntry.load_xml(response.body)
   end
 
@@ -115,15 +115,19 @@ class Hatenablog
     response
   end
 
+  def get(uri)
+    oauth_get(uri)
+  end
+
   def get_collection(uri = collection_uri)
     unless uri.include?(collection_uri)
       raise ArgumentError.new('Invalid collection URI: ' + uri)
     end
-    oauth_get(uri)
+    get(uri)
   end
 
   def get_category_doc
-    oauth_get(category_doc_uri)
+    get(category_doc_uri)
   end
 
   def post(uri = collection_uri, entry: nil)
