@@ -190,6 +190,44 @@ class HatenablogTest < Test::Unit::TestCase
     end
   end
 
+  sub_test_case 'OAuth error' do
+    setup do
+      setup_errors
+    end
+
+    test 'fail get' do
+      assert_raise_message(/^Fail to GET:/) { @sut.get('http://www.example.com') }
+    end
+
+    test 'fail post' do
+      assert_raise_message(/^Fail to POST:/) { @sut.post('http://www.example.com') }
+    end
+
+    test 'fail put' do
+      assert_raise_message(/^Fail to PUT:/) { @sut.put('http://www.example.com') }
+    end
+
+    test 'fail delete' do
+      assert_raise_message(/^Fail to DELETE:/) { @sut.delete('http://www.example.com') }
+    end
+
+    def setup_errors
+      headers = { 'Content-Type' => 'application/atom+xml; type=entry' }
+
+      access_token = Object.new
+      stub(access_token).get('http://www.example.com')    { raise 'problem' }
+      stub(access_token).post('http://www.example.com',
+                             '',
+                             headers)                     { raise 'problem' }
+      stub(access_token).put('http://www.example.com',
+                            '',
+                            headers)                      { raise 'problem' }
+      stub(access_token).delete('http://www.example.com',
+                                headers)                  { raise 'problem' }
+      @sut = OAuthAccessToken.new(access_token)
+    end
+  end
+
   sub_test_case 'helper methods' do
     setup do
       @sut = Hatenablog.create('test/fixture/test_conf.yml')
