@@ -147,7 +147,7 @@ class HatenablogTest < Test::Unit::TestCase
       access_token = Object.new
       f = File.open('test/fixture/entry.xml')
       mock(response).body { f.read }
-      mock(access_token).put(@sut.member_uri(entry_id: '6653458415122161047'), @sut.entry_xml) { response }
+      mock(access_token).put(@sut.member_uri('6653458415122161047'), @sut.entry_xml) { response }
       @sut.access_token = access_token
     end
   end
@@ -164,7 +164,7 @@ class HatenablogTest < Test::Unit::TestCase
     def setup_delete_entry_mock
       @sut = Hatenablog.create('test/fixture/test_conf.yml')
       access_token = Object.new
-      mock(access_token).delete(@sut.member_uri(entry_id: '6653458415122161047'))
+      mock(access_token).delete(@sut.member_uri('6653458415122161047'))
       @sut.access_token = access_token
     end
   end
@@ -238,7 +238,7 @@ class HatenablogTest < Test::Unit::TestCase
     end
 
     test 'member URI' do
-      assert_equal 'https://blog.hatena.ne.jp/test_user/test-user.hatenablog.com/atom/entry/6653458415122161047', @sut.member_uri(entry_id: '6653458415122161047')
+      assert_equal 'https://blog.hatena.ne.jp/test_user/test-user.hatenablog.com/atom/entry/6653458415122161047', @sut.member_uri('6653458415122161047')
     end
 
     test 'category document URI' do

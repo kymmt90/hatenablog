@@ -61,31 +61,31 @@ class Hatenablog
   end
 
   def get_entry(entry_id)
-    response = get(member_uri(entry_id: entry_id))
+    response = get(member_uri(entry_id))
     BlogEntry.load_xml(response.body)
   end
 
   def post_entry(title = '', content = '', categories = [], draft = 'no')
     entry_xml = entry_xml(title, content, categories, draft)
-    response = post(entry_xml: entry_xml)
+    response = post(entry_xml)
     BlogEntry.load_xml(response.body)
   end
 
   def update_entry(entry_id, title = '', content = '', categories = [], draft = 'no')
     entry_xml = entry_xml(title, content, categories, draft)
-    response = put(member_uri(entry_id: entry_id), entry_xml)
+    response = put(entry_xml, member_uri(entry_id))
     BlogEntry.load_xml(response.body)
   end
 
   def delete_entry(entry_id)
-    delete(member_uri(entry_id: entry_id))
+    delete(member_uri(entry_id))
   end
 
   def collection_uri(user_id = @user_id, blog_id = @blog_id)
     COLLECTION_URI % [user_id, blog_id]
   end
 
-  def member_uri(user_id = @user_id, blog_id = @blog_id, entry_id: '')
+  def member_uri(entry_id, user_id = @user_id, blog_id = @blog_id)
     MEMBER_URI % [user_id, blog_id, entry_id]
   end
 
@@ -144,11 +144,11 @@ XML
     get(category_doc_uri)
   end
 
-  def post(uri = collection_uri, entry_xml: '')
+  def post(entry_xml, uri = collection_uri)
     @access_token.post(uri, entry_xml)
   end
 
-  def put(uri, entry_xml)
+  def put(entry_xml, uri)
     @access_token.put(uri, entry_xml)
   end
 
