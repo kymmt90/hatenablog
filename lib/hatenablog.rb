@@ -17,6 +17,9 @@ class Hatenablog
 
   attr_writer :access_token
 
+  # Create a new hatenablog AtomPub client from a configuration file.
+  # @param [String] config_file configuration file path
+  # @return [Hatenablog] created hatenablog client
   def self.create(config_file = DEFAULT_CONFIG_PATH)
     config = Configuration.new(config_file)
     blog = Hatenablog.new(config.consumer_key, config.consumer_secret,
@@ -26,16 +29,23 @@ class Hatenablog
     yield blog
   end
 
+  # Get a blog title.
+  # @return [String] blog title
   def title
     feed = BlogFeed.load_xml(get_collection(collection_uri).body)
     feed.title
   end
 
+  # Get a author name.
+  # @return [String] blog author name
   def author_name
     feed = BlogFeed.load_xml(get_collection(collection_uri).body)
     feed.author_name
   end
 
+  # Get blog entries array.
+  # @param [Fixnum] page page number to get
+  # @return [Array] blog entries
   def entries(page = 0)
     next_page_uri = collection_uri
     current_page = 0
@@ -51,6 +61,8 @@ class Hatenablog
     entries
   end
 
+  # Get blog categories array.
+  # @return [Array] blog categories
   def categories
     categories_doc = REXML::Document.new(get_category_doc.body)
     categories_list = []
@@ -60,39 +72,77 @@ class Hatenablog
     categories_list
   end
 
+  # Get a blog entry specified by its ID.
+  # @param [String] entry_id entry ID
+  # @return [BlogEntry] entry
   def get_entry(entry_id)
     response = get(member_uri(entry_id))
     BlogEntry.load_xml(response.body)
   end
 
+  # Post a blog entry.
+  # @param [String] title entry title
+  # @param [String] content entry content
+  # @param [Array] categories entry categories
+  # @param [String] draft this entry is draft if 'yes', otherwise it is not draft
+  # @return [BlogEntry] posted entry
   def post_entry(title = '', content = '', categories = [], draft = 'no')
     entry_xml = entry_xml(title, content, categories, draft)
     response = post(entry_xml)
     BlogEntry.load_xml(response.body)
   end
 
+  # Update a blog entry specified by its ID.
+  # @param [String] entry_id updated entry ID
+  # @param [String] title entry title
+  # @param [String] content entry content
+  # @param [Array] categories entry categories
+  # @param [String] draft this entry is draft if 'yes', otherwise it is not draft
+  # @return [BlogEntry] updated entry
   def update_entry(entry_id, title = '', content = '', categories = [], draft = 'no')
     entry_xml = entry_xml(title, content, categories, draft)
     response = put(entry_xml, member_uri(entry_id))
     BlogEntry.load_xml(response.body)
   end
 
+  # Delete a blog entry specified by its ID.
+  # @param [String] entry_id deleted entry ID
   def delete_entry(entry_id)
     delete(member_uri(entry_id))
   end
 
+  # Get Hatenablog AtomPub collection URI.
+  # @param [String] user_id Hatena user ID
+  # @param [String] blog_id Hatenablog ID
+  # @return [String] Hatenablog AtomPub collection URI
   def collection_uri(user_id = @user_id, blog_id = @blog_id)
     COLLECTION_URI % [user_id, blog_id]
   end
 
+  # Get Hatenablog AtomPub member URI.
+  # @param [String] entry_id entry ID
+  # @param [String] user_id Hatena user ID
+  # @param [String] blog_id Hatenablog ID
+  # @return [String] Hatenablog AtomPub member URI
   def member_uri(entry_id, user_id = @user_id, blog_id = @blog_id)
     MEMBER_URI % [user_id, blog_id, entry_id]
   end
 
+  # Get Hatenablog AtomPub category document URI.
+  # @param [String] user_id Hatena user ID
+  # @param [String] blog_id Hatenablog ID
+  # @return [String] Hatenablog AtomPub category document URI
   def category_doc_uri(user_id = @user_id, blog_id = @blog_id)
     CATEGORY_URI % [user_id, blog_id]
   end
 
+  # Build a entry XML from arguments.
+  # @param [String] title entry title
+  # @param [String] content entry content
+  # @param [Array] categories entry categories
+  # @param [String] draft this entry is draft if 'yes', otherwise it is not draft
+  # @param [String] author_name entry author name
+  # @return [String] XML string
   def entry_xml(title = '', content = '', categories = [], draft = 'no', author_name = @user_id)
     xml = <<XML
 <?xml version="1.0" encoding="utf-8"?>
@@ -158,10 +208,16 @@ XML
 end
 
 class OAuthAccessToken
+
+  # Create a new OAuth 1.0a access token.
+  # @param [OAuth::AccessToken] access_token access token object
   def initialize(access_token)
     @access_token = access_token
   end
 
+  # HTTP GET method
+  # @param [string] uri target URI
+  # @return [Net::HTTPResponse] HTTP response
   def get(uri)
     begin
       response = @access_token.get(uri)
@@ -171,6 +227,11 @@ class OAuthAccessToken
     response
   end
 
+  # HTTP POST method
+  # @param [string] uri target URI
+  # @param [string] body HTTP request body
+  # @param [string] headers HTTP request headers
+  # @return [Net::HTTPResponse] HTTP response
   def post(uri,
            body = '',
            headers = { 'Content-Type' => 'application/atom+xml; type=entry' } )
@@ -182,6 +243,11 @@ class OAuthAccessToken
     response
   end
 
+  # HTTP PUT method
+  # @param [string] uri target URI
+  # @param [string] body HTTP request body
+  # @param [string] headers HTTP request headers
+  # @return [Net::HTTPResponse] HTTP response
   def put(uri,
           body = '',
           headers = { 'Content-Type' => 'application/atom+xml; type=entry' } )
@@ -193,6 +259,10 @@ class OAuthAccessToken
     response
   end
 
+  # HTTP DELETE method
+  # @param [string] uri target URI
+  # @param [string] headers HTTP request headers
+  # @return [Net::HTTPResponse] HTTP response
   def delete(uri,
              headers = { 'Content-Type' => 'application/atom+xml; type=entry' })
     begin

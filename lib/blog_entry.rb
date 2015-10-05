@@ -5,21 +5,34 @@ require 'rexml/document'
 class BlogEntry
   attr_reader :uri, :edit_uri, :id, :author_name, :title, :content
 
+  # Create a new blog entry from a XML string.
+  # @param [String] xml XML string representation
+  # @return [BlogEntry]
   def self.load_xml(xml)
     BlogEntry.new(xml)
   end
 
+  # Create a new blog entry from arguments.
+  # @param [String] uri entry URI
+  # @param [String] edit_uri entry URI for editing
+  # @param [String] author_name entry author name
+  # @param [String] title entry title
+  # @param [String] content entry content
+  # @param [String] draft this entry is draft if 'yes', otherwise it is not draft
+  # @param [Array] categories categories array
+  # @return [BlogEntry]
   def self.create(uri: '', edit_uri: '', author_name: '', title: '',
                   content: '', draft: 'no', categories: [])
-
     BlogEntry.new(self.build_xml(uri, edit_uri, author_name, title,
                                  content, draft, categories))
   end
 
+  # @return [Boolean]
   def draft?
     @draft == 'yes'
   end
 
+  # @return [Array]
   def categories
     @categories.dup
   end
@@ -30,6 +43,7 @@ class BlogEntry
     end
   end
 
+  # @return [String]
   def to_xml
     @document.to_s
   end

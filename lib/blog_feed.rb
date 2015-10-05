@@ -7,10 +7,14 @@ require 'time'
 class BlogFeed
   attr_reader :uri, :next_uri, :title, :author_name, :updated
 
+  # Create a new blog feed from a XML string.
+  # @param [String] xml XML string representation
+  # @return [BlogFeed]
   def self.load_xml(xml)
     BlogFeed.new(xml)
   end
 
+  # @return [Array]
   def entries
     @entries.dup
   end
@@ -21,6 +25,8 @@ class BlogFeed
     end
   end
 
+  # Return true if this feed has next feed.
+  # @return [Boolean]
   def has_next?
     @next_uri != ''
   end

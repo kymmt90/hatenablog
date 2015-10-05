@@ -3,10 +3,15 @@
 require 'rexml/document'
 
 class BlogCategory
+
+  # Create a new blog categories from a XML string.
+  # @param [String] xml XML string representation
+  # @return [BlogCategory]
   def self.load_xml(xml)
     BlogCategory.new(xml)
   end
 
+  # @return [Array]
   def categories
     @categories.dup
   end
@@ -17,6 +22,8 @@ class BlogCategory
     end
   end
 
+  # If fixed, only categories in this categories can be used for a blog entry.
+  # @return [Boolean]
   def fixed?
     @fixed == 'yes'
   end

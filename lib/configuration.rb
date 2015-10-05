@@ -4,11 +4,14 @@
 require 'yaml'
 
 class Configuration
-  # for OAuth authorization
+  # For OAuth authorization.
   attr_reader :consumer_key, :consumer_secret, :access_token, :access_token_secret
 
   attr_reader :user_id, :blog_id
 
+  # Create a new configuration.
+  # @param [String] config_file configuration file path
+  # @return [Configuration]
   def initialize(config_file)
     config = YAML.load_file(config_file)
     @consumer_key        = config['consumer_key']
