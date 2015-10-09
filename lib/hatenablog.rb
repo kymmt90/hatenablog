@@ -6,11 +6,11 @@ require 'blog_feed'
 require 'configuration'
 
 class Hatenablog
-  DEFAULT_CONFIG_PATH = './config.yml'
+  DEFAULT_CONFIG_PATH = './config.yml'.freeze
 
-  COLLECTION_URI = "https://blog.hatena.ne.jp/%s/%s/atom/entry"
-  MEMBER_URI     = "https://blog.hatena.ne.jp/%s/%s/atom/entry/%s"
-  CATEGORY_URI   = "https://blog.hatena.ne.jp/%s/%s/atom/category"
+  COLLECTION_URI = "https://blog.hatena.ne.jp/%s/%s/atom/entry".freeze
+  MEMBER_URI     = "https://blog.hatena.ne.jp/%s/%s/atom/entry/%s".freeze
+  CATEGORY_URI   = "https://blog.hatena.ne.jp/%s/%s/atom/category".freeze
 
   attr_writer :access_token
 
