@@ -1,5 +1,5 @@
 require 'blog_entry'
-require 'rexml/document'
+require 'nokogiri'
 require 'time'
 
 class BlogFeed
@@ -33,29 +33,28 @@ class BlogFeed
   private
 
   def initialize(xml)
-    @document = REXML::Document.new(xml)
+    @document = Nokogiri::XML(xml)
     parse_document
   end
 
   def parse_document
-    @uri = @document.elements["/feed/link[@rel='alternate']"].attribute('href').to_s
-    @next_uri = if @document.elements["/feed/link[@rel='next']"].nil?
-                  ''
-                else
-                  @document.elements["/feed/link[@rel='next']"].attribute('href').to_s
-                end
-    @title = @document.elements["/feed/title"].text
-    @author_name = @document.elements["//author/name"].text
-    @updated = Time.parse(@document.elements["/feed/updated"].text)
+    @uri         = @document.at_css("feed link[@rel='alternate']")['href'].to_s
+    @next_uri    = if @document.css("feed link[@rel='next']").empty?
+                     ''
+                   else
+                     @document.at_css("feed link[@rel='next']")['href'].to_s
+                   end
+    @title       = @document.at_css('feed title').content
+    @author_name = @document.at_css('author name').content
+    @updated     = Time.parse(@document.at_css('feed updated').content)
     parse_entry
   end
 
   def parse_entry
-    @entries = []
-    @document.elements.collect("//entry") do |entry|
+    @entries = @document.css('feed > entry').inject([]) do |entries, entry|
       # add namespace 'app' to recognize XML correctly
-      entry.add_attribute('xmlns:app', 'http://www.w3.org/2007/app')
-      @entries << BlogEntry.load_xml(entry.to_s)
+      entry['xmlns:app'] = 'http://www.w3.org/2007/app'
+      entries << BlogEntry.load_xml(entry.to_s)
     end
   end
 end

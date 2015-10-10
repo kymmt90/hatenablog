@@ -1,6 +1,6 @@
-require 'rexml/document'
 require 'oauth'
 
+require 'blog_category'
 require 'blog_entry'
 require 'blog_feed'
 require 'configuration'
@@ -61,12 +61,8 @@ class Hatenablog
   # Get blog categories array.
   # @return [Array] blog categories
   def categories
-    categories_doc = REXML::Document.new(get_category_doc.body)
-    categories_list = []
-    categories_doc.elements.each('//atom:category') do |cat|
-      categories_list << cat.attribute('term').to_s
-    end
-    categories_list
+    categories_doc = BlogCategory.new(get_category_doc.body)
+    categories_doc.categories
   end
 
   # Get a blog entry specified by its ID.

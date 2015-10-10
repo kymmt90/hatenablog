@@ -1,4 +1,4 @@
-require 'rexml/document'
+require 'nokogiri'
 
 class BlogCategory
 
@@ -30,17 +30,16 @@ class BlogCategory
   private
 
   def initialize(xml)
-    @document = REXML::Document.new(xml)
+    @document = Nokogiri::XML(xml)
     parse_document
   end
 
   def parse_document
-    @categories = []
-    @document.each_element("//atom:category") do |category|
-      @categories << category.attribute('term').to_s
+    @categories = @document.css('atom|category').inject([]) do |categories, category|
+      categories << category['term'].to_s
     end
 
-    @fixed = @document.elements["/app:categories"].attribute('fixed').to_s
+    @fixed = @document.at_css('app|categories')['fixed'].to_s
     @fixed = 'no' if @fixed.nil?
   end
 end

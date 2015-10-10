@@ -1,4 +1,4 @@
-require 'rexml/document'
+require 'nokogiri'
 
 class BlogEntry
   attr_reader :uri, :edit_uri, :id, :author_name, :title, :content
@@ -43,7 +43,7 @@ class BlogEntry
 
   # @return [String]
   def to_xml
-    @document.to_s
+    @document.to_s.gsub(/\"/, "'")
   end
 
 
@@ -72,25 +72,24 @@ XML
   end
 
   def initialize(xml)
-    @document = REXML::Document.new(xml)
+    @document = Nokogiri::XML(xml)
     parse_document
   end
 
   def parse_document
-    @uri = @document.elements["//link[@rel='alternate']"].attribute('href').to_s
-    @edit_uri = @document.elements["//link[@rel='edit']"].attribute('href').to_s
-    @id = @edit_uri.split('/').last
-    @author_name = @document.elements["//author/name"].text
-    @title = @document.elements["//title"].text
-    @content = @document.elements["//content"].text
-    @draft = @document.elements["//app:draft"].text
-    @categories = parse_categories
+    @uri         = @document.at_css('link[@rel="alternate"]')['href'].to_s
+    @edit_uri    = @document.at_css('link[@rel="edit"]')['href'].to_s
+    @id          = @edit_uri.split('/').last
+    @author_name = @document.at_css('author name').content
+    @title       = @document.at_css('title').content
+    @content     = @document.at_css('content').content
+    @draft       = @document.at_css('entry app|control app|draft').content
+    @categories  = parse_categories
   end
 
   def parse_categories
-    categories = []
-    @document.each_element("//category") do |category|
-      categories << category.attribute('term').to_s
+    categories = @document.css('category').inject([]) do |categories, category|
+      categories << category['term'].to_s
     end
     categories
   end
