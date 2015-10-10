@@ -219,7 +219,7 @@ class OAuthAccessToken
     begin
       response = @access_token.get(uri)
     rescue => problem
-      raise 'Fail to GET: ' + problem.to_s
+      raise OAuthError, 'Fail to GET: ' + problem.to_s
     end
     response
   end
@@ -235,7 +235,7 @@ class OAuthAccessToken
     begin
       response = @access_token.post(uri, body, headers)
     rescue => problem
-      raise 'Fail to POST: ' + problem.to_s
+      raise OAuthError, 'Fail to POST: ' + problem.to_s
     end
     response
   end
@@ -251,7 +251,7 @@ class OAuthAccessToken
     begin
       response = @access_token.put(uri, body, headers)
     rescue => problem
-      raise 'Fail to PUT: ' + problem.to_s
+      raise OAuthError, 'Fail to PUT: ' + problem.to_s
     end
     response
   end
@@ -265,8 +265,10 @@ class OAuthAccessToken
     begin
       response = @access_token.delete(uri, headers)
     rescue => problem
-      raise 'Fail to DELETE: ' + problem.to_s
+      raise OAuthError, 'Fail to DELETE: ' + problem.to_s
     end
     response
   end
 end
+
+class OAuthError < StandardError; end

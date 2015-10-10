@@ -196,19 +196,27 @@ class HatenablogTest < Test::Unit::TestCase
     end
 
     test 'fail get' do
-      assert_raise_message(/^Fail to GET:/) { @sut.get('http://www.example.com') }
+      assert_raise(OAuthError.new("Fail to GET: problem")) do
+        @sut.get('http://www.example.com')
+      end
     end
 
     test 'fail post' do
-      assert_raise_message(/^Fail to POST:/) { @sut.post('http://www.example.com') }
+      assert_raise(OAuthError.new("Fail to POST: problem")) do
+        @sut.post('http://www.example.com')
+      end
     end
 
     test 'fail put' do
-      assert_raise_message(/^Fail to PUT:/) { @sut.put('http://www.example.com') }
+      assert_raise(OAuthError.new("Fail to PUT: problem")) do
+        @sut.put('http://www.example.com')
+      end
     end
 
     test 'fail delete' do
-      assert_raise_message(/^Fail to DELETE:/) { @sut.delete('http://www.example.com') }
+      assert_raise(OAuthError.new("Fail to DELETE: problem")) do
+        @sut.delete('http://www.example.com')
+      end
     end
 
     def setup_errors
