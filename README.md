@@ -1,7 +1,7 @@
 # Hatenablog
 
 A library for Hatenablog AtomPub API.
-This library supports following operations through OAuth authorization:
+This gem supports following operations using OAuth authorization:
 
 - Get blog feeds, entries and categories
 - Post blog entries
@@ -26,7 +26,7 @@ Or install it yourself as:
 
 ### Get OAuth keys and tokens
 
-You need to set up OAuth 1.0a keys and tokens before using the gem.
+You need to set up OAuth 1.0a keys and tokens before using this gem.
 
 #### 1. Get consumer key and consumer key secret
 
@@ -44,7 +44,7 @@ Execute this command:
 
 #### 3. Set up the YAML configuration file
 
-The default file name is `conf.yml`:
+The default configuration file name is `conf.yml`:
 
 ```yml
 consumer_key: <Hatena application consumer key>
@@ -61,7 +61,7 @@ blog_id: <Hatenablog ID>
 require 'hatenablog'
 
 # Read the OAuth configuration from 'conf.yml'
-Hatenablog.create do |blog|
+Hatenablog::Client.create do |blog|
   # Get each entry's content
   blog.entries.each do |entry|
     puts entry.content
@@ -73,12 +73,12 @@ Hatenablog.create do |blog|
 								 ['Test', 'Programming'])  # categories
 
   # Update entry
-  posted_entry = blog.update_entry(posted_entry.id,
-                                   'Revised Entry Title',
-							       posted_entry.content,
-							       posted_entry.categories)
+  updated_entry = blog.update_entry(posted_entry.id,
+                                    'Revised Entry Title',
+							        posted_entry.content,
+							        posted_entry.categories)
 
   # Delete entry
-  blog.delete_entry(posted_entry.id)
+  blog.delete_entry(updated_entry.id)
 end
 ```
