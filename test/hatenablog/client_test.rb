@@ -40,19 +40,26 @@ module Hatenablog
     sub_test_case 'get the multiple feeds' do
       setup do
         setup_feeds
-        @got_entries = @sut.entries(1)
       end
 
       test 'the entries size is 2' do
-        assert_equal 2, @got_entries.length
+        assert_equal 2, @sut.entries(1).length
       end
 
       test 'get the first entry' do
-        assert_equal "2500000000", @got_entries[0].id
+        assert_equal "2500000000", @sut.entries(1)[0].id
       end
 
       test 'get the second entry' do
-        assert_equal "2500000000", @got_entries[1].id
+        assert_equal "2500000000", @sut.entries(1)[1].id
+      end
+
+      test 'get entries of the next feed' do
+        assert_equal '2500000000', @sut.next_feed(@sut_feed1).entries[0].id
+      end
+
+      test 'get no entries when the next feed does not exist' do
+        assert_nil @sut.next_feed(@sut_feed2)
       end
 
       def setup_feeds
@@ -60,10 +67,13 @@ module Hatenablog
         response1    = Object.new
         response2    = Object.new
         access_token = Object.new
-        f1 = File.open('test/fixture/feed_1.xml')
-        f2 = File.open('test/fixture/feed_2.xml')
-        stub(response1).body { f1.read }
-        stub(response2).body { f2.read }
+        feed1        = File.open('test/fixture/feed_1.xml').read
+        feed2        = File.open('test/fixture/feed_2.xml').read
+        @sut_feed1   = Feed.load_xml(feed1)
+        @sut_feed2   = Feed.load_xml(feed2)
+
+        stub(response1).body { feed1 }
+        stub(response2).body { feed2 }
         stub(access_token).get(@sut.collection_uri) { response1 }
         stub(access_token).get('https://blog.hatena.ne.jp/test_user/test-user.hatenablog.com/atom/entry?page=1377584217') { response2 }
         @sut.access_token = access_token

@@ -59,6 +59,14 @@ module Hatenablog
       entries
     end
 
+    # Get the next feed of the given feed.
+    # @param [Hatenablog::Feed] feed blog feed
+    # @return [Hatenablog::Feed] next blog feed
+    def next_feed(feed)
+      return nil unless feed.has_next?
+      Feed.load_xml(get_collection(feed.next_uri).body)
+    end
+
     # Get blog categories array.
     # @return [Array] blog categories
     def categories
