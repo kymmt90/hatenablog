@@ -45,17 +45,15 @@ module Hatenablog
     # @param [Fixnum] page page number to get
     # @return [Array] blog entries
     def entries(page = 0)
-      next_page_uri = collection_uri
-      current_page = 0
-      entries = []
-      while current_page <= page
-        feed = Feed.load_xml(get_collection(next_page_uri).body)
-        entries += feed.entries
+      feed = Feed.load_xml(get_collection(collection_uri).body)
+      entries = feed.entries
 
-        break unless feed.has_next?
-        next_page_uri = feed.next_uri
-        current_page += 1
+      (1..page).each do
+        feed = next_feed(feed)
+        break if feed.nil?
+        entries += feed.entries
       end
+
       entries
     end
 
