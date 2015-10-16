@@ -44,7 +44,7 @@ Execute this command:
 
 #### 3. Set up the YAML configuration file
 
-The default configuration file name is `conf.yml`:
+The default configuration file name is `config.yml`:
 
 ```yml
 consumer_key: <Hatena application consumer key>
@@ -60,7 +60,7 @@ blog_id: <Hatenablog ID>
 ```ruby
 require 'hatenablog'
 
-# Read the OAuth configuration from 'conf.yml'
+# Read the OAuth configuration from 'config.yml'
 Hatenablog::Client.create do |blog|
   # Get each entry's content
   blog.entries.each do |entry|
