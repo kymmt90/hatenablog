@@ -1,4 +1,4 @@
-# Hatenablog
+# Hatenablog [![Build Status](https://travis-ci.org/kymmt90/hatenablog.svg?branch=master)](https://travis-ci.org/kymmt90/hatenablog)
 
 A library for Hatenablog AtomPub API.
 This gem supports following operations using OAuth authorization:
