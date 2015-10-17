@@ -14,6 +14,6 @@ Rake::TestTask.new do |t|
 end
 
 YARD::Rake::YardocTask.new do |t|
-  t.files = Dir["lib/*.rb"]
+  t.files = Dir["lib/*.rb lib/hatenablog/*.rb"]
   t.options = %w(--debug --verbose) if $trace
 end
