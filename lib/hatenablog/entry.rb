@@ -2,7 +2,7 @@ require 'nokogiri'
 
 module Hatenablog
   class Entry
-    attr_reader :uri, :edit_uri, :id, :author_name, :title, :content
+    attr_reader :uri, :edit_uri, :id, :author_name, :title, :content, :updated
 
     # Create a new blog entry from a XML string.
     # @param [String] xml XML string representation
@@ -19,11 +19,12 @@ module Hatenablog
     # @param [String] content entry content
     # @param [String] draft this entry is draft if 'yes', otherwise it is not draft
     # @param [Array] categories categories array
+    # @param [String] updated entry updated datetime (ISO 8601)
     # @return [Hatenablog::Entry]
     def self.create(uri: '', edit_uri: '', author_name: '', title: '',
-                    content: '', draft: 'no', categories: [])
+                    content: '', draft: 'no', categories: [], updated: '')
       Hatenablog::Entry.new(self.build_xml(uri, edit_uri, author_name, title,
-                            content, draft, categories))
+                            content, draft, categories, updated))
     end
 
     # @return [Boolean]
@@ -50,7 +51,7 @@ module Hatenablog
 
     private
 
-    def self.build_xml(uri, edit_uri, author_name, title, content, draft, categories)
+    def self.build_xml(uri, edit_uri, author_name, title, content, draft, categories, updated)
       xml = <<XML
 <?xml version='1.0' encoding='UTF-8'?>
 <entry xmlns:app='http://www.w3.org/2007/app' xmlns='http://www.w3.org/2005/Atom'>
@@ -59,17 +60,20 @@ module Hatenablog
 <author><name>%s</name></author>
 <title>%s</title>
 <content type='text/x-markdown'>%s</content>
-%s
+%s%s
 <app:control>
   <app:draft>%s</app:draft>
 </app:control>
 </entry>
 XML
 
+      unless updated.nil?
+        updated = '<updated>' + updated + '</updated>'
+      end
       categories_tag = categories.inject('') do |s, c|
         s + "<category term=\"#{c}\" />\n"
       end
-      xml % [edit_uri, uri, author_name, title, content, categories_tag, draft]
+      xml % [edit_uri, uri, author_name, title, content, updated, categories_tag, draft]
     end
 
     def initialize(xml)
@@ -86,6 +90,9 @@ XML
       @content     = @document.at_css('content').content
       @draft       = @document.at_css('entry app|control app|draft').content
       @categories  = parse_categories
+      unless @document.at_css('entry updated').nil?
+        @updated = Time.parse(@document.at_css('entry updated').content)
+      end
     end
 
     def parse_categories

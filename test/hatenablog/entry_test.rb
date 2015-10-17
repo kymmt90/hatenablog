@@ -47,6 +47,10 @@ module Hatenablog
         assert_not_equal cats, @sut.categories
       end
 
+      test 'get the updated time' do
+        assert_equal '2015-01-01T12:34:56+09:00', @sut.updated.iso8601
+      end
+
       test 'get the content' do
         assert_equal 'This is the test entry.', @sut.content
       end
@@ -72,7 +76,8 @@ module Hatenablog
                                         title: 'Test title',
                                         content: 'This is the test entry.',
                                         draft: 'yes',
-                                        categories: ['Ruby', 'Test'])
+                                        categories: ['Ruby', 'Test'],
+                                        updated: '2015-01-01T01:23:45+09:00')
       end
 
       test 'get the entry ID' do
@@ -109,6 +114,10 @@ module Hatenablog
           actual << category
         end
         assert_equal ['Ruby', 'Test'], actual
+      end
+
+      test 'get the updated datetime' do
+        assert_equal '2015-01-01T01:23:45+09:00', @sut.updated.iso8601
       end
     end
   end

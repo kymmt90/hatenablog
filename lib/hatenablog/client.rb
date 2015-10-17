@@ -142,8 +142,9 @@ module Hatenablog
     # @param [Array] categories entry categories
     # @param [String] draft this entry is draft if 'yes', otherwise it is not draft
     # @param [String] author_name entry author name
+    # @param [String] updated entry updated datetime (ISO 8601)
     # @return [String] XML string
-    def entry_xml(title = '', content = '', categories = [], draft = 'no', author_name = @user_id)
+    def entry_xml(title = '', content = '', categories = [], draft = 'no', author_name = @user_id, updated = '')
       xml = <<XML
 <?xml version="1.0" encoding="utf-8"?>
 <entry xmlns="http://www.w3.org/2005/Atom"
@@ -151,17 +152,20 @@ module Hatenablog
   <title>%s</title>
   <author><name>%s</name></author>
   <content type="text/x-markdown">%s</content>
-  %s
+  %s%s
   <app:control>
     <app:draft>%s</app:draft>
   </app:control>
 </entry>
 XML
 
+      unless updated.empty?
+        updated = '<updated>' + updated + '</updated>'
+      end
       categories_tag = categories.inject('') do |s, c|
         s + "<category term=\"#{c}\" />\n"
       end
-      xml % [title, author_name, content, categories_tag, draft]
+      xml % [title, author_name, content, updated, categories_tag, draft]
     end
 
 
