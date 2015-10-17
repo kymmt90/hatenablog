@@ -51,11 +51,15 @@ module Hatenablog
       end
 
       test 'get the second entry' do
-        assert_equal "2500000000", @sut.entries(1)[1].id
+        assert_equal "2500000001", @sut.entries(1)[1].id
+      end
+
+      test 'get entries of the first feed' do
+        assert_equal '2500000000', @sut.next_feed.entries[0].id
       end
 
       test 'get entries of the next feed' do
-        assert_equal '2500000000', @sut.next_feed(@sut_feed1).entries[0].id
+        assert_equal '2500000001', @sut.next_feed(@sut_feed1).entries[0].id
       end
 
       test 'get no entries when the next feed does not exist' do

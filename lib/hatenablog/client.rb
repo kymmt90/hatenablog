@@ -58,9 +58,11 @@ module Hatenablog
     end
 
     # Get the next feed of the given feed.
+    # Return the first feed if no argument is passed.
     # @param [Hatenablog::Feed] feed blog feed
     # @return [Hatenablog::Feed] next blog feed
-    def next_feed(feed)
+    def next_feed(feed = nil)
+      return Feed.load_xml(get_collection(collection_uri).body) if feed.nil?
       return nil unless feed.has_next?
       Feed.load_xml(get_collection(feed.next_uri).body)
     end
