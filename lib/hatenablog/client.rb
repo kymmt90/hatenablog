@@ -98,9 +98,10 @@ module Hatenablog
     # @param [String] content entry content
     # @param [Array] categories entry categories
     # @param [String] draft this entry is draft if 'yes', otherwise it is not draft
+    # @param [String] updated entry updated datetime (ISO 8601)
     # @return [Hatenablog::BlogEntry] updated entry
-    def update_entry(entry_id, title = '', content = '', categories = [], draft = 'no')
-      entry_xml = entry_xml(title, content, categories, draft)
+    def update_entry(entry_id, title = '', content = '', categories = [], draft = 'no', updated = '')
+      entry_xml = entry_xml(title, content, categories, draft, updated)
       response = put(entry_xml, member_uri(entry_id))
       Entry.load_xml(response.body)
     end
@@ -141,10 +142,10 @@ module Hatenablog
     # @param [String] content entry content
     # @param [Array] categories entry categories
     # @param [String] draft this entry is draft if 'yes', otherwise it is not draft
-    # @param [String] author_name entry author name
     # @param [String] updated entry updated datetime (ISO 8601)
+    # @param [String] author_name entry author name
     # @return [String] XML string
-    def entry_xml(title = '', content = '', categories = [], draft = 'no', author_name = @user_id, updated = '')
+    def entry_xml(title = '', content = '', categories = [], draft = 'no', updated = '', author_name = @user_id)
       xml = <<XML
 <?xml version="1.0" encoding="utf-8"?>
 <entry xmlns="http://www.w3.org/2005/Atom"

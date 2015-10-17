@@ -284,6 +284,7 @@ module Hatenablog
                                  'This is test entry.',
                                  ['Ruby', 'Test'],
                                  'yes',
+                                 '',
                                  'test_user_2')
         f = File.open('test/fixture/generated_3.xml')
         assert_equal f.read, sut_xml
