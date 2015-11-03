@@ -120,5 +120,100 @@ module Hatenablog
         assert_equal '2015-01-01T01:23:45+09:00', @sut.updated.iso8601
       end
     end
+
+    sub_test_case 'build with block' do
+      setup do
+        @sut = Hatenablog::Entry.create do |entry|
+          entry.uri         = 'http://test-user.hatenablog.com/entry/2015/01/01/123456'
+          entry.edit_uri    = 'https://blog.hatena.ne.jp/test_user/test-user.hatenablog.com/atom/entry/6653458415122161047'
+          entry.author_name = 'test_user'
+          entry.title       = 'Test title'
+          entry.content     = 'This is the test entry.'
+          entry.draft       = 'yes'
+          entry.categories  = ['Ruby', 'Test']
+          entry.updated     = '2015-01-01T01:23:45+09:00'
+        end
+      end
+
+      test 'get the entry ID' do
+        assert_equal '6653458415122161047', @sut.id
+      end
+
+      test 'get the author name' do
+        assert_equal 'test_user', @sut.author_name
+      end
+
+      test 'get the title' do
+        assert_equal 'Test title', @sut.title
+      end
+
+      test 'get the URI' do
+        assert_equal 'http://test-user.hatenablog.com/entry/2015/01/01/123456', @sut.uri
+      end
+
+      test 'get the edit URI' do
+        assert_equal 'https://blog.hatena.ne.jp/test_user/test-user.hatenablog.com/atom/entry/6653458415122161047', @sut.edit_uri
+      end
+
+      test 'this entry is draft' do
+        assert_true @sut.draft?
+      end
+
+      test 'get categores' do
+        assert_equal ['Ruby', 'Test'], @sut.categories
+      end
+
+      test 'get each category' do
+        actual = []
+        @sut.each_category do |category|
+          actual << category
+        end
+        assert_equal ['Ruby', 'Test'], actual
+      end
+
+      test 'get the updated datetime' do
+        assert_equal '2015-01-01T01:23:45+09:00', @sut.updated.iso8601
+      end
+    end
+
+    sub_test_case 'build with arguments and block' do
+      setup do
+        @sut = Hatenablog::Entry.create(author_name: 'test_user',
+                                        categories: ['Ruby', 'Test']) do |entry|
+          entry.title    = 'Test title'
+          entry.content  = 'This is the test entry.'
+          entry.draft    = 'yes'
+          entry.updated  = '2015-01-01T01:23:45+09:00'
+        end
+      end
+
+      test 'get the author name' do
+        assert_equal 'test_user', @sut.author_name
+      end
+
+      test 'get the title' do
+        assert_equal 'Test title', @sut.title
+      end
+
+      test 'this entry is draft' do
+        assert_true @sut.draft?
+      end
+
+      test 'get categores' do
+        assert_equal ['Ruby', 'Test'], @sut.categories
+      end
+
+      test 'get each category' do
+        actual = []
+        @sut.each_category do |category|
+          actual << category
+        end
+        assert_equal ['Ruby', 'Test'], actual
+      end
+
+      test 'get the updated datetime' do
+        assert_equal '2015-01-01T01:23:45+09:00', @sut.updated.iso8601
+      end
+    end
   end
 end

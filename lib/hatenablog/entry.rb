@@ -2,7 +2,17 @@ require 'nokogiri'
 
 module Hatenablog
   class Entry
-    attr_reader :uri, :edit_uri, :id, :author_name, :title, :content, :updated
+    attr_accessor :uri, :author_name, :title, :content, :draft, :categories
+    attr_reader :edit_uri, :id, :updated
+
+    def updated=(date)
+      @updated = Time.parse(date)
+    end
+
+    def edit_uri=(uri)
+      @edit_uri = uri
+      @id       = uri.split('/').last
+    end
 
     # Create a new blog entry from a XML string.
     # @param [String] xml XML string representation
@@ -23,8 +33,10 @@ module Hatenablog
     # @return [Hatenablog::Entry]
     def self.create(uri: '', edit_uri: '', author_name: '', title: '',
                     content: '', draft: 'no', categories: [], updated: '')
-      Hatenablog::Entry.new(self.build_xml(uri, edit_uri, author_name, title,
-                            content, draft, categories, updated))
+      entry = Hatenablog::Entry.new(self.build_xml(uri, edit_uri, author_name, title,
+                                                   content, draft, categories, updated))
+      yield entry if block_given?
+      entry
     end
 
     # @return [Boolean]
