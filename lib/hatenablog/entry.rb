@@ -52,28 +52,27 @@ module Hatenablog
     private
 
     def self.build_xml(uri, edit_uri, author_name, title, content, draft, categories, updated)
-      xml = <<XML
-<?xml version='1.0' encoding='UTF-8'?>
-<entry xmlns:app='http://www.w3.org/2007/app' xmlns='http://www.w3.org/2005/Atom'>
-<link href='%s' rel='edit'/>
-<link href='%s' rel='alternate' type='text/html'/>
-<author><name>%s</name></author>
-<title>%s</title>
-<content type='text/x-markdown'>%s</content>
-%s%s
-<app:control>
-  <app:draft>%s</app:draft>
-</app:control>
-</entry>
-XML
+      builder = Nokogiri::XML::Builder.new(encoding: 'utf-8') do |xml|
+        xml.entry('xmlns'     => 'http://www.w3.org/2005/Atom',
+                  'xmlns:app' => 'http://www.w3.org/2007/app') do
+          xml.link(href: edit_uri, rel: 'edit')
+          xml.link(href: uri,      rel: 'alternate', type: 'text/html')
+          xml.author do
+            xml.name author_name
+          end
+          xml.title title
+          xml.content(content, type: 'text/x-markdown')
+          xml.updated updated unless updated.empty? || updated.nil?
+          categories.each do |category|
+            xml.category(term: category)
+          end
+          xml['app'].control do
+            xml['app'].draft draft
+          end
+        end
+      end
 
-      unless updated.nil?
-        updated = '<updated>' + updated + '</updated>'
-      end
-      categories_tag = categories.inject('') do |s, c|
-        s + "<category term=\"#{c}\" />\n"
-      end
-      xml % [edit_uri, uri, author_name, title, content, updated, categories_tag, draft]
+      builder.to_xml
     end
 
     def initialize(xml)

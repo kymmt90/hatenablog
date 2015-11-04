@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<entry xmlns="http://www.w3.org/2005/Atom"
-       xmlns:app="http://www.w3.org/2007/app">
+<entry xmlns="http://www.w3.org/2005/Atom" xmlns:app="http://www.w3.org/2007/app">
   <title>test title</title>
-  <author><name>test_user</name></author>
+  <author>
+    <name>test_user</name>
+  </author>
   <content type="text/x-markdown">This is test entry.</content>
-  <category term="Ruby" />
-<category term="Test" />
-
+  <category term="Ruby"/>
+  <category term="Test"/>
   <app:control>
     <app:draft>no</app:draft>
   </app:control>

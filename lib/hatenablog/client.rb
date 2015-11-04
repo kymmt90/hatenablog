@@ -148,27 +148,25 @@ module Hatenablog
     # @param [String] author_name entry author name
     # @return [String] XML string
     def entry_xml(title = '', content = '', categories = [], draft = 'no', updated = '', author_name = @user_id)
-      xml = <<XML
-<?xml version="1.0" encoding="utf-8"?>
-<entry xmlns="http://www.w3.org/2005/Atom"
-       xmlns:app="http://www.w3.org/2007/app">
-  <title>%s</title>
-  <author><name>%s</name></author>
-  <content type="text/x-markdown">%s</content>
-  %s%s
-  <app:control>
-    <app:draft>%s</app:draft>
-  </app:control>
-</entry>
-XML
+      builder = Nokogiri::XML::Builder.new(encoding: 'utf-8') do |xml|
+        xml.entry('xmlns'     => 'http://www.w3.org/2005/Atom',
+                  'xmlns:app' => 'http://www.w3.org/2007/app') do
+          xml.title title
+          xml.author do
+            xml.name author_name
+          end
+          xml.content(content, type: 'text/x-markdown')
+          xml.updated updated unless updated.empty? || updated.nil?
+          categories.each do |category|
+            xml.category(term: category)
+          end
+          xml['app'].control do
+            xml['app'].draft draft
+          end
+        end
+      end
 
-      unless updated.empty?
-        updated = '<updated>' + updated + '</updated>'
-      end
-      categories_tag = categories.inject('') do |s, c|
-        s + "<category term=\"#{c}\" />\n"
-      end
-      xml % [title, author_name, content, updated, categories_tag, draft]
+      builder.to_xml
     end
 
 
