@@ -66,6 +66,47 @@ module Hatenablog
         end
         assert_equal ['Ruby', 'Test'], actual
       end
+
+      sub_test_case 'modify properties' do
+        test 'modify the author name' do
+          @sut.author_name = 'test_user_2'
+          assert_equal @sut.to_xml, @xml.gsub('<name>test_user</name>', '<name>test_user_2</name>')
+        end
+
+        test 'modify the title' do
+          @sut.title = 'Modified title'
+          assert_equal @xml.gsub('Test title', 'Modified title'), @sut.to_xml
+        end
+
+        test 'modify the URI' do
+          @sut.uri = 'http://test-user.hatenablog.com/entry/2015/01/01/234567'
+          assert_equal @xml.gsub('http://test-user.hatenablog.com/entry/2015/01/01/123456',
+                                 'http://test-user.hatenablog.com/entry/2015/01/01/234567'), @sut.to_xml
+
+        end
+
+        test 'modify the edit URI' do
+          @sut.edit_uri = 'https://blog.hatena.ne.jp/test_user/test-user.hatenablog.com/atom/edit/6653458415122161048'
+          assert_equal @xml.gsub('https://blog.hatena.ne.jp/test_user/test-user.hatenablog.com/atom/edit/6653458415122161047',
+                                 'https://blog.hatena.ne.jp/test_user/test-user.hatenablog.com/atom/edit/6653458415122161048'), @sut.to_xml
+        end
+
+        test 'modify the content' do
+          @sut.content = 'This is the modified test entry.'
+          assert_equal @xml.gsub("<content type='text/x-markdown'>This is the test entry.</content>",
+                                 "<content type='text/x-markdown'>This is the modified test entry.</content>"), @sut.to_xml
+        end
+
+        test 'modify the draft property' do
+          @sut.draft = 'yes'
+          assert_equal @xml.gsub('no', 'yes'), @sut.to_xml
+        end
+
+        test 'modify the updated time' do
+          @sut.updated = '2015-02-02T12:34:56+09:00'
+          assert_equal @xml.gsub('<updated>2015-01-01', '<updated>2015-02-02'), @sut.to_xml
+        end
+      end
     end
 
     sub_test_case 'build from initialize arguments' do

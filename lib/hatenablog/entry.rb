@@ -1,7 +1,32 @@
 require 'nokogiri'
+require 'time'
 
 module Hatenablog
+  module AfterHook
+    # Register a hooking method for given methods.
+    # The hook method is executed after calling given methods.
+    # @param [Symbol] hooking method name
+    # @param [Array] hooked methods name array
+    def after_hook(hook, *methods)
+      methods.each do |method|
+        origin_method = "#{method}_origin".to_sym
+        if instance_methods.include? origin_method
+          raise NameError, "#{origin_method} isn't a unique name"
+        end
+
+        alias_method origin_method, method
+
+        define_method(method) do |*args, &block|
+          result = send(origin_method, *args, &block)
+          send(hook)
+        end
+      end
+    end
+  end
+
   class Entry
+    extend AfterHook
+
     attr_accessor :uri, :author_name, :title, :content, :draft, :categories
     attr_reader :edit_uri, :id, :updated
 
@@ -13,6 +38,26 @@ module Hatenablog
       @edit_uri = uri
       @id       = uri.split('/').last
     end
+
+    def update_xml
+      @document.at_css('author name').content = @author_name
+      @document.at_css('title').content = @title
+      @document.at_css('link[@rel="alternate"]')['href'] = @uri
+      @document.at_css('link[@rel="edit"]')['href'] = @edit_uri
+      @document.at_css('content').content = @content
+      @document.at_css('entry app|control app|draft').content = @draft
+      unless @updated.nil? || @document.at_css('entry updated').nil?
+        @document.at_css('entry updated').content = @updated.iso8601
+      end
+      # unless @categories.nil?
+      #   @document.category.remove
+      #   @categories.each do |category|
+      #     @document.category(term: category)
+      #   end
+      # end
+    end
+
+    after_hook :update_xml, :uri=, :edit_uri=, :author_name=, :title=, :content=, :updated=, :draft=, :categories=
 
     # Create a new blog entry from a XML string.
     # @param [String] xml XML string representation
@@ -60,9 +105,6 @@ module Hatenablog
       @document.to_s.gsub(/\"/, "'")
     end
 
-
-    private
-
     def self.build_xml(uri, edit_uri, author_name, title, content, draft, categories, updated)
       builder = Nokogiri::XML::Builder.new(encoding: 'utf-8') do |xml|
         xml.entry('xmlns'     => 'http://www.w3.org/2005/Atom',
@@ -74,9 +116,11 @@ module Hatenablog
           end
           xml.title title
           xml.content(content, type: 'text/x-markdown')
-          xml.updated updated unless updated.empty? || updated.nil?
-          categories.each do |category|
-            xml.category(term: category)
+          xml.updated updated unless updated.nil? || updated.empty?
+          unless categories.nil?
+            categories.each do |category|
+              xml.category(term: category)
+            end
           end
           xml['app'].control do
             xml['app'].draft draft
@@ -86,6 +130,9 @@ module Hatenablog
 
       builder.to_xml
     end
+
+
+    private
 
     def initialize(xml)
       @document = Nokogiri::XML(xml)
