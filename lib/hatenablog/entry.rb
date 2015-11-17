@@ -46,15 +46,26 @@ module Hatenablog
       @document.at_css('link[@rel="edit"]')['href'] = @edit_uri
       @document.at_css('content').content = @content
       @document.at_css('entry app|control app|draft').content = @draft
+
       unless @updated.nil? || @document.at_css('entry updated').nil?
         @document.at_css('entry updated').content = @updated.iso8601
       end
-      # unless @categories.nil?
-      #   @document.category.remove
-      #   @categories.each do |category|
-      #     @document.category(term: category)
-      #   end
-      # end
+
+      unless @categories.nil?
+        old_categories = @document.css('category')
+        return if old_categories.empty? || !categories_modified?(old_categories, @categories)
+
+        prev_node = @document.at_css('category').previous
+        old_categories.each do |category|
+          category.remove
+        end
+
+        @categories.each do |category|
+          c = @document.create_element('category', term: category)
+          prev_node.next = c
+          prev_node = c
+        end
+      end
     end
 
     after_hook :update_xml, :uri=, :edit_uri=, :author_name=, :title=, :content=, :updated=, :draft=, :categories=
@@ -158,6 +169,12 @@ module Hatenablog
         categories << category['term'].to_s
       end
       categories
+    end
+
+    def categories_modified?(old_categories, new_categories)
+      old_categories_set = Set.new(old_categories.map { |category| category['term'] })
+      new_categories_set = Set.new(new_categories)
+      old_categories_set != new_categories_set
     end
   end
 end

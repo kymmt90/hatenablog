@@ -106,6 +106,12 @@ module Hatenablog
           @sut.updated = '2015-02-02T12:34:56+09:00'
           assert_equal @xml.gsub('<updated>2015-01-01', '<updated>2015-02-02'), @sut.to_xml
         end
+
+        test 'modify categories' do
+          categories = ['Ruby', 'Atom']
+          @sut.categories = categories
+          assert_equal @xml.gsub("term='Test'", "term='Atom'").gsub("\n", '').gsub(' ', ''), @sut.to_xml.gsub("\n", '').gsub(' ', '')
+        end
       end
     end
 
