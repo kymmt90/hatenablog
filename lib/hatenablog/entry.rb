@@ -28,7 +28,7 @@ module Hatenablog
     extend AfterHook
 
     attr_accessor :uri, :author_name, :title, :content, :draft, :categories
-    attr_reader :edit_uri, :id, :updated
+    attr_reader   :edit_uri, :id, :updated
 
     def updated=(date)
       @updated = Time.parse(date)
@@ -37,35 +37,6 @@ module Hatenablog
     def edit_uri=(uri)
       @edit_uri = uri
       @id       = uri.split('/').last
-    end
-
-    def update_xml
-      @document.at_css('author name').content = @author_name
-      @document.at_css('title').content = @title
-      @document.at_css('link[@rel="alternate"]')['href'] = @uri
-      @document.at_css('link[@rel="edit"]')['href'] = @edit_uri
-      @document.at_css('content').content = @content
-      @document.at_css('entry app|control app|draft').content = @draft
-
-      unless @updated.nil? || @document.at_css('entry updated').nil?
-        @document.at_css('entry updated').content = @updated.iso8601
-      end
-
-      unless @categories.nil?
-        old_categories = @document.css('category')
-        return if old_categories.empty? || !categories_modified?(old_categories, @categories)
-
-        prev_node = @document.at_css('category').previous
-        old_categories.each do |category|
-          category.remove
-        end
-
-        @categories.each do |category|
-          c = @document.create_element('category', term: category)
-          prev_node.next = c
-          prev_node = c
-        end
-      end
     end
 
     after_hook :update_xml, :uri=, :edit_uri=, :author_name=, :title=, :content=, :updated=, :draft=, :categories=
@@ -171,10 +142,38 @@ module Hatenablog
       categories
     end
 
+    def update_xml
+      @document.at_css('author name').content                 = @author_name
+      @document.at_css('title').content                       = @title
+      @document.at_css('link[@rel="alternate"]')['href']      = @uri
+      @document.at_css('link[@rel="edit"]')['href']           = @edit_uri
+      @document.at_css('content').content                     = @content
+      @document.at_css('entry app|control app|draft').content = @draft
+
+      unless @updated.nil? || @document.at_css('entry updated').nil?
+        @document.at_css('entry updated').content = @updated.iso8601
+      end
+
+      unless @categories.nil?
+        old_categories = @document.css('category')
+        return if old_categories.empty? || !categories_modified?(old_categories, @categories)
+
+        prev_node = @document.at_css('category').previous
+        old_categories.each do |category|
+          category.remove
+        end
+
+        @categories.each do |category|
+          prev_node.next = @document.create_element('category', term: category)
+          prev_node = prev_node.next
+        end
+      end
+    end
+
     def categories_modified?(old_categories, new_categories)
-      old_categories_set = Set.new(old_categories.map { |category| category['term'] })
-      new_categories_set = Set.new(new_categories)
-      old_categories_set != new_categories_set
+      old_set = Set.new(old_categories.map { |category| category['term'] })
+      new_set = Set.new(new_categories)
+      old_set != new_set
     end
   end
 end
