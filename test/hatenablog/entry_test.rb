@@ -40,11 +40,11 @@ module Hatenablog
         assert_equal ['Ruby', 'Test'], @sut.categories
       end
 
-      test 'changing categories array does not influence to the original categories array' do
-        cats = @sut.categories
-        cats << 'Rails'
-        cats[1] = 'Sinatra'
-        assert_not_equal cats, @sut.categories
+      test 'modified a categories array does not influence to the original categories array' do
+        modified = @sut.categories
+        modified << 'Rails'
+        modified[1] = 'Sinatra'
+        assert_not_equal modified, @sut.categories
       end
 
       test 'get the updated time' do
@@ -67,10 +67,10 @@ module Hatenablog
         assert_equal ['Ruby', 'Test'], actual
       end
 
-      sub_test_case 'modify properties' do
+      sub_test_case 'modify an instance attributes' do
         test 'modify the author name' do
           @sut.author_name = 'test_user_2'
-          assert_equal @sut.to_xml, @xml.gsub('<name>test_user</name>', '<name>test_user_2</name>')
+          assert_equal @xml.gsub('<name>test_user</name>', '<name>test_user_2</name>'), @sut.to_xml
         end
 
         test 'modify the title' do
@@ -80,24 +80,21 @@ module Hatenablog
 
         test 'modify the URI' do
           @sut.uri = 'http://test-user.hatenablog.com/entry/2015/01/01/234567'
-          assert_equal @xml.gsub('http://test-user.hatenablog.com/entry/2015/01/01/123456',
-                                 'http://test-user.hatenablog.com/entry/2015/01/01/234567'), @sut.to_xml
-
+          assert_equal @xml.gsub('entry/2015/01/01/123456', 'entry/2015/01/01/234567'), @sut.to_xml
         end
 
         test 'modify the edit URI' do
           @sut.edit_uri = 'https://blog.hatena.ne.jp/test_user/test-user.hatenablog.com/atom/edit/6653458415122161048'
-          assert_equal @xml.gsub('https://blog.hatena.ne.jp/test_user/test-user.hatenablog.com/atom/edit/6653458415122161047',
-                                 'https://blog.hatena.ne.jp/test_user/test-user.hatenablog.com/atom/edit/6653458415122161048'), @sut.to_xml
+          assert_equal @xml.gsub('edit/6653458415122161047', 'edit/6653458415122161048'), @sut.to_xml
         end
 
         test 'modify the content' do
-          @sut.content = 'This is the modified test entry.'
+          @sut.content = 'modified test entry'
           assert_equal @xml.gsub("<content type='text/x-markdown'>This is the test entry.</content>",
-                                 "<content type='text/x-markdown'>This is the modified test entry.</content>"), @sut.to_xml
+                                 "<content type='text/x-markdown'>modified test entry</content>"), @sut.to_xml
         end
 
-        test 'modify the draft property' do
+        test 'modify the draft status' do
           @sut.draft = 'yes'
           assert_equal @xml.gsub('no', 'yes'), @sut.to_xml
         end
@@ -108,23 +105,22 @@ module Hatenablog
         end
 
         test 'modify categories' do
-          categories = ['Ruby', 'Atom']
-          @sut.categories = categories
-          assert_equal @xml.gsub("term='Test'", "term='Atom'").gsub("\n", '').gsub(' ', ''), @sut.to_xml.gsub("\n", '').gsub(' ', '')
+          @sut.categories = ['Ruby', 'Atom']
+          assert_equal @xml.gsub("term='Test'", "term='Atom'").gsub(/\s/, ''), @sut.to_xml.gsub(/\s/, '')
         end
       end
     end
 
     sub_test_case 'build from initialize arguments' do
       setup do
-        @sut = Hatenablog::Entry.create(uri: 'http://test-user.hatenablog.com/entry/2015/01/01/123456',
-                                        edit_uri: 'https://blog.hatena.ne.jp/test_user/test-user.hatenablog.com/atom/entry/6653458415122161047',
+        @sut = Hatenablog::Entry.create(uri:         'http://test-user.hatenablog.com/entry/2015/01/01/123456',
+                                        edit_uri:    'https://blog.hatena.ne.jp/test_user/test-user.hatenablog.com/atom/entry/6653458415122161047',
                                         author_name: 'test_user',
-                                        title: 'Test title',
-                                        content: 'This is the test entry.',
-                                        draft: 'yes',
-                                        categories: ['Ruby', 'Test'],
-                                        updated: '2015-01-01T01:23:45+09:00')
+                                        title:       'Test title',
+                                        content:     'This is the test entry.',
+                                        draft:       'yes',
+                                        categories:  ['Ruby', 'Test'],
+                                        updated:     '2015-01-01T01:23:45+09:00')
       end
 
       test 'get the entry ID' do
