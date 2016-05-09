@@ -1,6 +1,5 @@
-require 'test/unit'
-
 require 'test_helper'
+
 require 'hatenablog/configuration'
 
 module Hatenablog

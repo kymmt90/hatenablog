@@ -1,7 +1,6 @@
-require 'test/unit'
+require 'test_helper'
 require 'test/unit/rr'
 
-require 'test_helper'
 require 'hatenablog/client'
 
 module Hatenablog
