@@ -1,4 +1,4 @@
-# Hatenablog [![Build Status](https://travis-ci.org/kymmt90/hatenablog.svg?branch=master)](https://travis-ci.org/kymmt90/hatenablog) [![Code Climate](https://codeclimate.com/github/kymmt90/hatenablog/badges/gpa.svg)](https://codeclimate.com/github/kymmt90/hatenablog)
+# Hatenablog [![Build Status](https://travis-ci.org/kymmt90/hatenablog.svg?branch=master)](https://travis-ci.org/kymmt90/hatenablog) [![Code Climate](https://codeclimate.com/github/kymmt90/hatenablog/badges/gpa.svg)](https://codeclimate.com/github/kymmt90/hatenablog) [![Test Coverage](https://codeclimate.com/github/kymmt90/hatenablog/badges/coverage.svg)](https://codeclimate.com/github/kymmt90/hatenablog/coverage)
 
 A library for Hatenablog AtomPub API.
 This gem supports following operations using OAuth authorization:
