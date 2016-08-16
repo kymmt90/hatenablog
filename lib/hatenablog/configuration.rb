@@ -1,3 +1,4 @@
+require 'erb'
 require 'yaml'
 
 module Hatenablog
@@ -11,7 +12,7 @@ module Hatenablog
     # @param [String] config_file configuration file path
     # @return [Hatenablog::Configuration]
     def initialize(config_file)
-      config = YAML.load_file(config_file)
+      config = YAML.load(ERB.new(File.read(config_file)).result)
       unless config.has_key?('consumer_key') && config.has_key?('consumer_secret')     &&
              config.has_key?('access_token') && config.has_key?('access_token_secret') &&
              config.has_key?('user_id')      && config.has_key?('blog_id')
