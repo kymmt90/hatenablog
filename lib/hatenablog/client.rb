@@ -20,7 +20,7 @@ module Hatenablog
     # @param [String] config_file configuration file path
     # @return [Hatenablog::Client] created hatenablog client
     def self.create(config_file = DEFAULT_CONFIG_PATH)
-      config = Configuration.new(config_file)
+      config = Configuration.create(config_file)
       blog = Hatenablog::Client.new(config)
       return blog unless block_given?
       yield blog
