@@ -28,12 +28,12 @@ module Hatenablog
 
       def setup_feed
         @sut = Hatenablog::Client.create('test/fixture/test_conf.yml')
-        access_token = Object.new
+        requester = Object.new
         response = Object.new
         f = File.open('test/fixture/feed_1.xml')
         stub(response).body { f.read }
-        stub(access_token).get { response }
-        @sut.access_token = access_token
+        stub(requester).get { response }
+        @sut.requester = requester
       end
     end
 
@@ -70,7 +70,7 @@ module Hatenablog
         @sut = Hatenablog::Client.create('test/fixture/test_conf.yml')
         response1    = Object.new
         response2    = Object.new
-        access_token = Object.new
+        requester = Object.new
         feed1        = File.open('test/fixture/feed_1.xml').read
         feed2        = File.open('test/fixture/feed_2.xml').read
         @sut_feed1   = Feed.load_xml(feed1)
@@ -78,9 +78,9 @@ module Hatenablog
 
         stub(response1).body { feed1 }
         stub(response2).body { feed2 }
-        stub(access_token).get(@sut.collection_uri) { response1 }
-        stub(access_token).get('https://blog.hatena.ne.jp/test_user/test-user.hatenablog.com/atom/entry?page=1377584217') { response2 }
-        @sut.access_token = access_token
+        stub(requester).get(@sut.collection_uri) { response1 }
+        stub(requester).get('https://blog.hatena.ne.jp/test_user/test-user.hatenablog.com/atom/entry?page=1377584217') { response2 }
+        @sut.requester = requester
       end
     end
 
@@ -116,12 +116,12 @@ module Hatenablog
 
       def setup_entry
         @sut = Hatenablog::Client.create('test/fixture/test_conf.yml')
-        access_token = Object.new
+        requester = Object.new
         response = Object.new
         f = File.open('test/fixture/entry.xml')
         stub(response).body { f.read }
-        stub(access_token).get { response }
-        @sut.access_token = access_token
+        stub(requester).get { response }
+        @sut.requester = requester
       end
     end
 
@@ -137,11 +137,11 @@ module Hatenablog
       def setup_post_entry_mock
         @sut = Hatenablog::Client.create('test/fixture/test_conf.yml')
         response     = Object.new
-        access_token = Object.new
+        requester = Object.new
         f = File.open('test/fixture/entry.xml')
         mock(response).body { f.read }
-        mock(access_token).post(@sut.collection_uri, @sut.entry_xml) { response }
-        @sut.access_token = access_token
+        mock(requester).post(@sut.collection_uri, @sut.entry_xml) { response }
+        @sut.requester = requester
       end
     end
 
@@ -157,11 +157,11 @@ module Hatenablog
       def setup_update_entry_mock
         @sut = Hatenablog::Client.create('test/fixture/test_conf.yml')
         response     = Object.new
-        access_token = Object.new
+        requester = Object.new
         f = File.open('test/fixture/entry.xml')
         mock(response).body { f.read }
-        mock(access_token).put(@sut.member_uri('6653458415122161047'), @sut.entry_xml) { response }
-        @sut.access_token = access_token
+        mock(requester).put(@sut.member_uri('6653458415122161047'), @sut.entry_xml) { response }
+        @sut.requester = requester
       end
     end
 
@@ -176,9 +176,9 @@ module Hatenablog
 
       def setup_delete_entry_mock
         @sut = Hatenablog::Client.create('test/fixture/test_conf.yml')
-        access_token = Object.new
-        mock(access_token).delete(@sut.member_uri('6653458415122161047'))
-        @sut.access_token = access_token
+        requester = Object.new
+        mock(requester).delete(@sut.member_uri('6653458415122161047'))
+        @sut.requester = requester
       end
     end
 
@@ -194,12 +194,12 @@ module Hatenablog
 
       def setup_categories
         @sut = Hatenablog::Client.create('test/fixture/test_conf.yml')
-        access_token = Object.new
+        requester = Object.new
         response = Object.new
         f = File.open('test/fixture/categories_1.xml')
         stub(response).body { f.read }
-        stub(access_token).get { response }
-        @sut.access_token = access_token
+        stub(requester).get { response }
+        @sut.requester = requester
       end
     end
 
@@ -209,25 +209,25 @@ module Hatenablog
       end
 
       test 'fail get' do
-        assert_raise(OAuthError.new("Fail to GET: problem")) do
+        assert_raise(Hatenablog::Requester::RequestError.new("Fail to GET: problem")) do
           @sut.get('http://www.example.com')
         end
       end
 
       test 'fail post' do
-        assert_raise(OAuthError.new("Fail to POST: problem")) do
+        assert_raise(Hatenablog::Requester::RequestError.new("Fail to POST: problem")) do
           @sut.post('http://www.example.com')
         end
       end
 
       test 'fail put' do
-        assert_raise(OAuthError.new("Fail to PUT: problem")) do
+        assert_raise(Hatenablog::Requester::RequestError.new("Fail to PUT: problem")) do
           @sut.put('http://www.example.com')
         end
       end
 
       test 'fail delete' do
-        assert_raise(OAuthError.new("Fail to DELETE: problem")) do
+        assert_raise(Hatenablog::Requester::RequestError.new("Fail to DELETE: problem")) do
           @sut.delete('http://www.example.com')
         end
       end
@@ -245,7 +245,7 @@ module Hatenablog
                                headers)                      { raise 'problem' }
         stub(access_token).delete('http://www.example.com',
                                   headers)                  { raise 'problem' }
-        @sut = OAuthAccessToken.new(access_token)
+        @sut = Hatenablog::Requester::OAuth.new(access_token)
       end
     end
 
