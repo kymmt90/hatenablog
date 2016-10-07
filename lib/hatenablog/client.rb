@@ -172,15 +172,20 @@ module Hatenablog
     private
 
     def initialize(config)
-      consumer = OAuth::Consumer.new(config.consumer_key, config.consumer_secret)
-      @requester = Requester::OAuth.new(OAuth::AccessToken.new(consumer,
-                                                               config.access_token,
-                                                               config.access_token_secret))
+      @requester = create_requester(config)
 
       @user_id = config.user_id
       @blog_id = config.blog_id
     end
 
+    def create_requester(config)
+      if config.auth_type == 'basic'
+        Requester::Basic.new(config.user_id, config.api_key)
+      else
+        consumer = OAuth::Consumer.new(config.consumer_key, config.consumer_secret)
+        Requester::OAuth.new(OAuth::AccessToken.new(consumer, config.access_token, config.access_token_secret))
+      end
+    end
 
     def get(uri)
       @requester.get(uri)

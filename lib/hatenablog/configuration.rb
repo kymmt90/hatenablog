@@ -4,11 +4,13 @@ require 'ostruct'
 
 module Hatenablog
   class Configuration < OpenStruct
-    OAUTH_CONFIGS = %w(consumer_key consumer_secret access_token access_token_secret user_id blog_id)
+    OAUTH_KEYS = %w(consumer_key consumer_secret access_token access_token_secret user_id blog_id)
+    BASIC_KEYS = %w(api_key user_id blog_id)
 
     def self.create(config_file)
       config = YAML.load(ERB.new(File.read(config_file)).result)
-      unless (lacking_keys = OAUTH_CONFIGS.select {|key| !config.has_key? key}).empty?
+      keys = config['auth_type'] == 'basic' ? BASIC_KEYS : OAUTH_KEYS
+      unless (lacking_keys = keys.select {|key| !config.has_key? key}).empty?
         raise ConfigurationError, "Following keys are not setup. #{lacking_keys}"
       end
 
