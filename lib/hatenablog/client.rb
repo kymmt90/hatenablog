@@ -21,9 +21,7 @@ module Hatenablog
     # @return [Hatenablog::Client] created hatenablog client
     def self.create(config_file = DEFAULT_CONFIG_PATH)
       config = Configuration.new(config_file)
-      blog = Hatenablog::Client.new(config.consumer_key, config.consumer_secret,
-                                    config.access_token, config.access_token_secret,
-                                    config.user_id, config.blog_id)
+      blog = Hatenablog::Client.new(config)
       return blog unless block_given?
       yield blog
     end
@@ -173,15 +171,14 @@ module Hatenablog
 
     private
 
-    def initialize(consumer_key, consumer_secret, access_token, access_token_secret,
-                   user_id, blog_id)
-      consumer = OAuth::Consumer.new(consumer_key, consumer_secret)
+    def initialize(config)
+      consumer = OAuth::Consumer.new(config.consumer_key, config.consumer_secret)
       @requester = Requester::OAuth.new(OAuth::AccessToken.new(consumer,
-                                                                  access_token,
-                                                                  access_token_secret))
+                                                               config.access_token,
+                                                               config.access_token_secret))
 
-      @user_id = user_id
-      @blog_id = blog_id
+      @user_id = config.user_id
+      @blog_id = config.blog_id
     end
 
 
