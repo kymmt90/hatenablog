@@ -68,13 +68,13 @@ module Hatenablog
 
       def setup_feeds
         @sut = Hatenablog::Client.create('test/fixture/test_conf.yml')
-        response1    = Object.new
-        response2    = Object.new
-        requester = Object.new
-        feed1        = File.open('test/fixture/feed_1.xml').read
-        feed2        = File.open('test/fixture/feed_2.xml').read
-        @sut_feed1   = Feed.load_xml(feed1)
-        @sut_feed2   = Feed.load_xml(feed2)
+        response1  = Object.new
+        response2  = Object.new
+        requester  = Object.new
+        feed1      = File.open('test/fixture/feed_1.xml').read
+        feed2      = File.open('test/fixture/feed_2.xml').read
+        @sut_feed1 = Feed.load_xml(feed1)
+        @sut_feed2 = Feed.load_xml(feed2)
 
         stub(response1).body { feed1 }
         stub(response2).body { feed2 }
