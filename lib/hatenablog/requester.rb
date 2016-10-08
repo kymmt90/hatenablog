@@ -1,8 +1,18 @@
 require 'net/http'
+require 'oauth'
 
 module Hatenablog
   module Requester
     class RequestError < StandardError; end
+
+    def self.create(config)
+      if config.auth_type == 'basic'
+        Requester::Basic.new(config.user_id, config.api_key)
+      else
+        consumer = ::OAuth::Consumer.new(config.consumer_key, config.consumer_secret)
+        Requester::OAuth.new(::OAuth::AccessToken.new(consumer, config.access_token, config.access_token_secret))
+      end
+    end
 
     class OAuth
       # Create a new OAuth 1.0a access token.
