@@ -5,7 +5,7 @@
 [![Test Coverage](https://codeclimate.com/github/kymmt90/hatenablog/badges/coverage.svg)](https://codeclimate.com/github/kymmt90/hatenablog/coverage)
 
 A library for Hatenablog AtomPub API.
-This gem supports following operations using OAuth authorization:
+This gem supports following operations using OAuth or Basic authorization:
 
 - Get blog feeds, entries and categories
 - Post blog entries
@@ -70,12 +70,23 @@ user_id: <%= ENV['USER_ID'] %>
 blog_id: <%= ENV['BLOG_ID'] %>
 ```
 
+### (OPTIONAL) Get Basic Authentication credentials
+If you want to use Basic Authentication, visit `http://blog.hatena.ne.jp/#{user_id}/#{blog_id}/config/detail`
+and check your API key (APIキー) and set up `config.yml` like the following.
+
+```yml
+auth_type: basic
+api_key: <%= ENV['API_KEY'] %>
+user_id: <%= ENV['USER_ID'] %>
+blog_id: <%= ENV['BLOG_ID'] %>
+```
+
 ## Usage
 
 ```ruby
 require 'hatenablog'
 
-# Read the OAuth configuration from 'config.yml'
+# Read the configuration from 'config.yml'
 Hatenablog::Client.create do |blog|
   # Get each entry's content
   blog.entries.each do |entry|

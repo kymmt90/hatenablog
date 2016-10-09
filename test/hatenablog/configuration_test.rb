@@ -6,7 +6,7 @@ module Hatenablog
   class ConfigurationTest < Test::Unit::TestCase
     sub_test_case 'correct configuration' do
       setup do
-        @sut = Hatenablog::Configuration.new('test/fixture/test_conf.yml')
+        @sut = Hatenablog::Configuration.create('test/fixture/test_conf.yml')
       end
 
       test 'consumer key' do
@@ -36,8 +36,8 @@ module Hatenablog
 
     sub_test_case 'incorrect configuration' do
       test 'raise error when reading incorrect configuration' do
-        assert_raise(Hatenablog::ConfigurationError.new('the configure file is incorrect')) do
-          Hatenablog::Configuration.new('test/fixture/error_conf.yml')
+        assert_raise(Hatenablog::ConfigurationError.new('Following keys are not setup. ["access_token"]')) do
+          Hatenablog::Configuration.create('test/fixture/error_conf.yml')
         end
       end
     end

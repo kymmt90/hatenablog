@@ -1,30 +1,23 @@
 require 'erb'
 require 'yaml'
+require 'ostruct'
 
 module Hatenablog
-  class Configuration
-    # For OAuth authorization.
-    attr_reader :consumer_key, :consumer_secret, :access_token, :access_token_secret
-
-    attr_reader :user_id, :blog_id
+  class Configuration < OpenStruct
+    OAUTH_KEYS = %w(consumer_key consumer_secret access_token access_token_secret user_id blog_id)
+    BASIC_KEYS = %w(api_key user_id blog_id)
 
     # Create a new configuration.
     # @param [String] config_file configuration file path
     # @return [Hatenablog::Configuration]
-    def initialize(config_file)
+    def self.create(config_file)
       config = YAML.load(ERB.new(File.read(config_file)).result)
-      unless config.has_key?('consumer_key') && config.has_key?('consumer_secret')     &&
-             config.has_key?('access_token') && config.has_key?('access_token_secret') &&
-             config.has_key?('user_id')      && config.has_key?('blog_id')
-        raise ConfigurationError, 'the configure file is incorrect'
+      keys = config['auth_type'] == 'basic' ? BASIC_KEYS : OAUTH_KEYS
+      unless (lacking_keys = keys.select {|key| !config.has_key? key}).empty?
+        raise ConfigurationError, "Following keys are not setup. #{lacking_keys}"
       end
 
-      @consumer_key        = config['consumer_key']
-      @consumer_secret     = config['consumer_secret']
-      @access_token        = config['access_token']
-      @access_token_secret = config['access_token_secret']
-      @user_id             = config['user_id']
-      @blog_id             = config['blog_id']
+      new(config)
     end
   end
 
