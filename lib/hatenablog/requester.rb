@@ -88,8 +88,9 @@ module Hatenablog
         delete: Net::HTTP::Delete
       }
 
-      # Create a new OAuth 1.0a access token.
-      # @param [OAuth::AccessToken] access_token access token object
+      # Create a new Basic authentication requester.
+      # @params [string] user_id Hatena user ID
+      # @params [string] api_key Hatena API key
       def initialize(user_id, api_key)
         @user_id = user_id
         @api_key = api_key
