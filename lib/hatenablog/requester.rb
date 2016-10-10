@@ -3,6 +3,9 @@ require 'oauth'
 
 module Hatenablog
   module Requester
+    ATOM_CONTENT_TYPE = 'application/atom+xml; type=entry'.freeze
+    DEFAULT_HEADER = { 'Content-Type' => ATOM_CONTENT_TYPE }
+
     class RequestError < StandardError; end
 
     def self.create(config)
@@ -25,12 +28,7 @@ module Hatenablog
       # @param [string] uri target URI
       # @return [Net::HTTPResponse] HTTP response
       def get(uri)
-        begin
-          response = @access_token.get(uri)
-        rescue => problem
-          raise RequestError, 'Fail to GET: ' + problem.to_s
-        end
-        response
+        request(:get, uri)
       end
 
       # HTTP POST method
@@ -38,15 +36,8 @@ module Hatenablog
       # @param [string] body HTTP request body
       # @param [string] headers HTTP request headers
       # @return [Net::HTTPResponse] HTTP response
-      def post(uri,
-               body = '',
-               headers = { 'Content-Type' => 'application/atom+xml; type=entry' } )
-        begin
-          response = @access_token.post(uri, body, headers)
-        rescue => problem
-          raise RequestError, 'Fail to POST: ' + problem.to_s
-        end
-        response
+      def post(uri, body = '', headers = DEFAULT_HEADER)
+        request(:post, uri, body: body, headers: headers)
       end
 
       # HTTP PUT method
@@ -54,29 +45,26 @@ module Hatenablog
       # @param [string] body HTTP request body
       # @param [string] headers HTTP request headers
       # @return [Net::HTTPResponse] HTTP response
-      def put(uri,
-              body = '',
-              headers = { 'Content-Type' => 'application/atom+xml; type=entry' } )
-        begin
-          response = @access_token.put(uri, body, headers)
-        rescue => problem
-          raise RequestError, 'Fail to PUT: ' + problem.to_s
-        end
-        response
+      def put(uri, body = '', headers = DEFAULT_HEADER)
+        request(:put, uri, body: body, headers: headers)
       end
 
       # HTTP DELETE method
       # @param [string] uri target URI
       # @param [string] headers HTTP request headers
       # @return [Net::HTTPResponse] HTTP response
-      def delete(uri,
-                 headers = { 'Content-Type' => 'application/atom+xml; type=entry' })
+      def delete(uri, headers = DEFAULT_HEADER)
+        request(:delete, uri, headers: headers)
+      end
+
+      private
+
+      def request(method, uri, body: nil, headers: nil)
         begin
-          response = @access_token.delete(uri, headers)
+          @access_token.send(method, *[uri, body, headers].compact)
         rescue => problem
-          raise RequestError, 'Fail to DELETE: ' + problem.to_s
+          raise RequestError, "Fail to #{method.upcase}: " + problem.to_s
         end
-        response
       end
     end
 
@@ -136,7 +124,7 @@ module Hatenablog
         req.basic_auth @user_id, @api_key
         if body
           req.body = body
-          req.content_type = 'application/atom+xml; type=entry'
+          req.content_type = ATOM_CONTENT_TYPE
         end
 
         http = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.port == 443)
