@@ -17,11 +17,13 @@ module Hatenablog
     end
 
     def check_valid_or_raise
-      unless (lacking_keys = self.lacking_keys).empty?
+      unless (lacking_keys = self.send(:lacking_keys)).empty?
         raise ConfigurationError, "Following keys are not setup. #{lacking_keys.map(&:to_s)}"
       end
       self
     end
+
+    private
 
     def lacking_keys
       required_keys = self['auth_type'] == 'basic' ? BASIC_KEYS : OAUTH_KEYS
