@@ -19,11 +19,11 @@ module Hatenablog
       end
 
       test 'the entries size is 1' do
-        assert_equal 1, @sut.entries.length
+        assert_equal 1, @sut.entries.to_a.length
       end
 
       test 'get the entry' do
-        assert_equal "2500000000", @sut.entries[0].id
+        assert_equal "2500000000", @sut.entries.to_a[0].id
       end
 
       def setup_feed
