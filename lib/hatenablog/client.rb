@@ -38,20 +38,18 @@ module Hatenablog
       feed.author_name
     end
 
-    # Get blog entries array.
+    # Get a enumerator of blog entries.
     # @param [Fixnum] page page number to get
-    # @return [Array] blog entries
+    # @return [Hatenablog::Entries] enumerator of blog entries
     def entries(page = 0)
-      feed = Feed.load_xml(get_collection(collection_uri).body)
-      entries = feed.entries
+      raise ArgumentError.new('page must be non-negative') if page < 0
+      Entries.new(self, page)
+    end
 
-      (1..page).each do
-        feed = next_feed(feed)
-        break if feed.nil?
-        entries += feed.entries
-      end
-
-      entries
+    # Get all blog entries.
+    # @return [Hatenablog::Entries] enumerator of blog entries
+    def all_entries
+      Entries.new(self, nil)
     end
 
     # Get the next feed of the given feed.
@@ -200,6 +198,23 @@ module Hatenablog
 
     def delete(uri)
       @requester.delete(uri)
+    end
+  end
+
+  class Entries
+    include Enumerable
+
+    def initialize(client, page = 0)
+      @client = client
+      @page = page
+    end
+
+    def each
+      current_page = 0
+      until (@page && current_page > @page) || !(feed = @client.next_feed(feed))
+        feed.entries.each { |entry| yield entry }
+        current_page += 1
+      end
     end
   end
 end

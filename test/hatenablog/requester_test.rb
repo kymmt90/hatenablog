@@ -1,6 +1,8 @@
 require 'test_helper'
 require 'test/unit/rr'
 
+require 'hatenablog/requester'
+
 module Hatenablog
   class RequesterTest < Test::Unit::TestCase
     sub_test_case 'OAuth error' do
