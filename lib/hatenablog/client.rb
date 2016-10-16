@@ -24,6 +24,16 @@ module Hatenablog
       yield blog
     end
 
+    def initialize(config = nil)
+      if block_given?
+        yield config = Configuration.new
+        config.check_valid_or_raise
+      end
+      @requester = Requester.create(config)
+      @user_id = config.user_id
+      @blog_id = config.blog_id
+    end
+
     # Get a blog title.
     # @return [String] blog title
     def title
@@ -164,14 +174,7 @@ module Hatenablog
       builder.to_xml
     end
 
-
     private
-
-    def initialize(config)
-      @requester = Requester.create(config)
-      @user_id = config.user_id
-      @blog_id = config.blog_id
-    end
 
     def get(uri)
       @requester.get(uri)
