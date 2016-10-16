@@ -13,10 +13,14 @@ module Hatenablog
     def self.create(config_file)
       loaded_config = YAML.load(ERB.new(File.read(config_file)).result)
       config = new(loaded_config)
-      unless (lacking_keys = config.lacking_keys).empty?
+      config.check_valid_or_raise
+    end
+
+    def check_valid_or_raise
+      unless (lacking_keys = self.lacking_keys).empty?
         raise ConfigurationError, "Following keys are not setup. #{lacking_keys.map(&:to_s)}"
       end
-      config
+      self
     end
 
     def lacking_keys
