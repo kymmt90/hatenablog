@@ -4,20 +4,25 @@ require 'ostruct'
 
 module Hatenablog
   class Configuration < OpenStruct
-    OAUTH_KEYS = %w(consumer_key consumer_secret access_token access_token_secret user_id blog_id)
-    BASIC_KEYS = %w(api_key user_id blog_id)
+    OAUTH_KEYS = %i(consumer_key consumer_secret access_token access_token_secret user_id blog_id)
+    BASIC_KEYS = %i(api_key user_id blog_id)
 
     # Create a new configuration.
     # @param [String] config_file configuration file path
     # @return [Hatenablog::Configuration]
     def self.create(config_file)
-      config = YAML.load(ERB.new(File.read(config_file)).result)
-      keys = config['auth_type'] == 'basic' ? BASIC_KEYS : OAUTH_KEYS
-      unless (lacking_keys = keys.select {|key| !config.has_key? key}).empty?
-        raise ConfigurationError, "Following keys are not setup. #{lacking_keys}"
+      loaded_config = YAML.load(ERB.new(File.read(config_file)).result)
+      config = new(loaded_config)
+      unless (lacking_keys = config.lacking_keys).empty?
+        raise ConfigurationError, "Following keys are not setup. #{lacking_keys.map(&:to_s)}"
       end
+      config
+    end
 
-      new(config)
+    def lacking_keys
+      required_keys = self['auth_type'] == 'basic' ? BASIC_KEYS : OAUTH_KEYS
+      config_keys   = to_h.keys
+      required_keys.select { |key| !config_keys.include?(key) }
     end
   end
 
