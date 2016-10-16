@@ -5,6 +5,58 @@ require 'hatenablog/client'
 
 module Hatenablog
   class ClientTest < Test::Unit::TestCase
+    sub_test_case 'initialize client with block' do
+      setup do
+        setup_feed
+      end
+
+      test 'get the blog title' do
+        assert_equal 'Test Blog', @sut.title
+      end
+
+      test 'get the blog author name' do
+        assert_equal 'test_user', @sut.author_name
+      end
+
+      test 'the entries size is 1' do
+        assert_equal 1, @sut.entries.to_a.length
+      end
+
+      test 'get the entry' do
+        assert_equal "2500000000", @sut.entries.to_a[0].id
+      end
+
+      def setup_feed
+        @sut = Hatenablog::Client.new do |config|
+          config.consumer_key = 'cMOVPffXo7LiL317UeaiEQ=='
+          config.consumer_secret = '0987654321ZYXWVUTSRQPONML='
+          config.access_token = 'oGoYArVaBWpNSKp9ljXm+g=='
+          config.access_token_secret = '7OgCvJW/GPbFnAnIHgG2t1ivdzxrvZTdvJl/yA=='
+          config.user_id = 'test_user'
+          config.blog_id = 'test-user.hatenablog.com'
+        end
+        requester = Object.new
+        response = Object.new
+        f = File.open('test/fixture/feed_1.xml')
+        stub(response).body { f.read }
+        stub(requester).get { response }
+        @sut.requester = requester
+      end
+    end
+
+    sub_test_case 'fail to initialize client with block' do
+      test 'fail to initialize client' do
+        assert_raise Hatenablog::ConfigurationError, 'Following keys are not setup. ["access_token", "access_token_secret"]' do
+          @sut = Hatenablog::Client.new do |config|
+            config.consumer_key = 'cMOVPffXo7LiL317UeaiEQ=='
+            config.consumer_secret = '0987654321ZYXWVUTSRQPONML='
+            config.user_id = 'test_user'
+            config.blog_id = 'test-user.hatenablog.com'
+          end
+        end
+      end
+    end
+
     sub_test_case 'get the single page feed' do
       setup do
         setup_feed
