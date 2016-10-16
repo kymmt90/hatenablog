@@ -46,6 +46,12 @@ module Hatenablog
       Entries.new(self, page)
     end
 
+    # Get all blog entries.
+    # @return [Hatenablog::Entries] enumerator of blog entries
+    def all_entries
+      Entries.new(self, nil)
+    end
+
     # Get the next feed of the given feed.
     # Return the first feed if no argument is passed.
     # @param [Hatenablog::Feed] feed blog feed
@@ -205,7 +211,7 @@ module Hatenablog
 
     def each
       current_page = 0
-      until current_page > @page || !(feed = @client.next_feed(feed))
+      until (@page && current_page > @page) || !(feed = @client.next_feed(feed))
         feed.entries.each { |entry| yield entry }
         current_page += 1
       end

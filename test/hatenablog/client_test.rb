@@ -46,6 +46,10 @@ module Hatenablog
         assert_equal 2, @sut.entries(1).count
       end
 
+      test 'the entries size is 2 with using Client#all_entries' do
+        assert_equal 2, @sut.all_entries.count
+      end
+
       test 'get the first entry' do
         assert_equal "2500000000", @sut.entries(1).to_a[0].id
       end
