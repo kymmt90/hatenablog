@@ -4,7 +4,7 @@ require 'hatenablog/configuration'
 
 module Hatenablog
   class ConfigurationTest < Test::Unit::TestCase
-    sub_test_case 'correct configuration' do
+    sub_test_case 'correct configuration with OAuth configuration file' do
       setup do
         @sut = Hatenablog::Configuration.create('test/fixture/test_conf.yml')
       end
@@ -31,6 +31,36 @@ module Hatenablog
 
       test 'blog ID' do
         assert_equal 'test-user.hatenablog.com', @sut.blog_id
+      end
+
+      test 'valid configuration' do
+        assert_equal @sut, @sut.check_valid_or_raise
+      end
+    end
+
+    sub_test_case 'correct configuration with Basic configuration file' do
+      setup do
+        @sut = Hatenablog::Configuration.create('test/fixture/test_conf_basic.yml')
+      end
+
+      test 'API key' do
+        assert_equal 'sukw9e87fg', @sut.api_key
+      end
+
+      test 'user ID' do
+        assert_equal 'test_user', @sut.user_id
+      end
+
+      test 'blog ID' do
+        assert_equal 'test-user.hatenablog.com', @sut.blog_id
+      end
+
+      test 'auth type' do
+        assert_equal 'basic', @sut.auth_type
+      end
+
+      test 'valid configuration' do
+        assert_equal @sut, @sut.check_valid_or_raise
       end
     end
 
