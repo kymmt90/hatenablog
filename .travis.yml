@@ -3,8 +3,11 @@ rvm:
   - 2.0.0
   - 2.1.0
   - 2.2.0
+  - 2.3.0
 env:
   - TZ=Asia/Tokyo
 addons:
   code_climate:
     repo_token: 309cf0784d00d2a6009566d28be111a8a0280cdeb2da280225eedf577b16beb5
+after_success:
+  - bundle exec codeclimate-test-reporter
