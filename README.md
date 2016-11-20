@@ -4,8 +4,9 @@
 [![Code Climate](https://codeclimate.com/github/kymmt90/hatenablog/badges/gpa.svg)](https://codeclimate.com/github/kymmt90/hatenablog)
 [![Test Coverage](https://codeclimate.com/github/kymmt90/hatenablog/badges/coverage.svg)](https://codeclimate.com/github/kymmt90/hatenablog/coverage)
 
-A library for Hatenablog AtomPub API.
-This gem supports following operations using OAuth or Basic authorization:
+> A library for Hatena Blog AtomPub API
+
+This gem supports following operations through OAuth 1.0a or Basic authentication:
 
 - Get blog feeds, entries and categories
 - Post blog entries
@@ -28,7 +29,7 @@ Or install it yourself as:
 
     $ gem install hatenablog
 
-### Get OAuth keys and tokens
+### Get OAuth credentials
 
 You need to set up OAuth 1.0a keys and tokens before using this gem.
 
@@ -46,7 +47,7 @@ Execute this command:
 	Access token: <your access token>
 	Access token secret: <your access token secret>
 
-#### 3. Set up the YAML configuration file
+#### 3. [Optional] Set up the YAML configuration file
 
 The default configuration file name is `config.yml`:
 
@@ -70,9 +71,13 @@ user_id: <%= ENV['USER_ID'] %>
 blog_id: <%= ENV['BLOG_ID'] %>
 ```
 
-### (OPTIONAL) Get Basic Authentication credentials
-If you want to use Basic Authentication, visit `http://blog.hatena.ne.jp/#{user_id}/#{blog_id}/config/detail`
-and check your API key (APIキー) and set up `config.yml` like the following.
+`blog_id` means your Hatena Blog domain, like "example-user.hatenablog.com".
+
+You also can set these configurations in your code as described in [the below section](#factories).
+
+### [Optional] Get Basic authentication credentials
+If you want to use Basic authentication, visit `http://blog.hatena.ne.jp/#{user_id}/#{blog_id}/config/detail`
+and check your API key and set up `config.yml` like the following.
 
 ```yml
 auth_type: basic
@@ -108,3 +113,115 @@ Hatenablog::Client.create do |blog|
   blog.delete_entry(updated_entry.id)
 end
 ```
+
+## API
+
+### Factories
+
+You can create the client from the configuration file.
+
+```ruby
+# Create the client from "./config.yml"
+client = Hatenablog::Client.create
+
+# Create the client from the specified configuration
+client = Hatenablog::Client.create('../another_config.yml')
+
+Hatenablog::Client.create do |client|
+  # Use the client in the block
+end
+```
+
+You can also create the client with a block for configurations.
+
+```ruby
+client = Hatenablog::Client.new do |config|
+  config.consumer_key        = 'XXXXXXXXXXXXXXXXXXXX'
+  config.consumer_secret     = 'XXXXXXXXXXXXXXXXXXXX'
+  config.access_token        = 'XXXXXXXXXXXXXXXXXXXX'
+  config.access_token_secret = 'XXXXXXXXXXXXXXXXXXXX'
+  config.user_id             = 'example-user'
+  config.blog_id             = 'example-user.hatenablog.com'
+end
+```
+
+### Blog
+
+```ruby
+client.title        # Get the blog title
+client.author_name  # Get the blog author name
+```
+
+### Feeds
+
+```ruby
+feed = client.next_feed # Get the first feed when no argument is passed
+feed.uri
+feed.next_uri     # The next feed URI
+feed.title
+feed.author_name
+feed.update       # Updated datetime
+
+feed.entries  # entries in the feed
+feed.each_entry do |entry|
+  # ...
+end
+feed.has_next?  # true if the next page exists
+next_feed = client.next_feed(feed)
+```
+
+### Entries
+
+```ruby
+client.get_entry('0000000000000000000') # Get the entry specifed by its ID
+client.entries      # Get blog entries in the first page
+client.entries(1)   # Get blog entries in the first and the second page
+client.all_entries  # Get all entries in the blog
+
+entry = client.post_entry('Example Title',  # title
+                          'This is the **example** entry.',  # content
+                          ['Ruby', 'Rails'],  # categories
+                          'yes'  # draft
+                         )
+entry.id
+entry.uri
+entry.edit_uri
+entry.author_name
+entry.title        #=> 'Example Title'
+entry.content      #=> 'This is the **example** entry.'
+entry.draft        #=> 'yes'
+entry.draft?       #=> true
+entry.categories   #=> ['Ruby', 'Rails']
+entry.updated      # Updated datetime
+
+client.update_entry(entry.id,
+                    entry.title,
+                    'This is the **modified** example entry.',
+                    entry.categories,
+                    'no')
+client.delete_entry(entry.id)
+```
+
+### Categories
+
+```ruby
+categories = client.categories  # Get categories registered in the blog
+categories.each do |cat|
+  puts cat
+end
+
+# When categories are fixed, you can only use those categories for your entries.
+# ref: https://tools.ietf.org/html/rfc5023#section-7.2.1.1
+categories.fixed?
+```
+
+## Contributing
+
+1. Create your feature branch (`git checkout -b my-new-feature`)
+2. Commit your changes (`git commit -am 'Add some feature'`)
+3. Push to the branch (`git push origin my-new-feature`)
+4. Create a new Pull Request
+
+## License
+
+MIT
