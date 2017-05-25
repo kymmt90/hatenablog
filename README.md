@@ -42,10 +42,10 @@ Access [Hatena application registoration page](http://developer.hatena.ne.jp/) a
 Execute this command:
 
     $ get_access_token <your consumer key> <your consumer secret>
-	Visit this website and get the PIN: https://www.hatena.com/oauth/authorize?oauth_token=XXXXXXXXXXXXXXXXXXXX
-	Enter the PIN: <your PIN> [Enter]
-	Access token: <your access token>
-	Access token secret: <your access token secret>
+    Visit this website and get the PIN: https://www.hatena.com/oauth/authorize?oauth_token=XXXXXXXXXXXXXXXXXXXX
+    Enter the PIN: <your PIN> [Enter]
+    Access token: <your access token>
+    Access token secret: <your access token secret>
 
 #### 3. [Optional] Set up the YAML configuration file
 
@@ -99,15 +99,19 @@ Hatenablog::Client.create do |blog|
   end
 
   # Post new entry
-  posted_entry = blog.post_entry('Entry Title',
-                                 'This is entry contents', # markdown form
-								 ['Test', 'Programming'])  # categories
+  posted_entry = blog.post_entry(
+    'Entry Title',
+    'This is entry contents', # markdown form
+    ['Test', 'Programming']   # categories
+  )
 
   # Update entry
-  updated_entry = blog.update_entry(posted_entry.id,
-                                    'Revised Entry Title',
-							        posted_entry.content,
-							        posted_entry.categories)
+  updated_entry = blog.update_entry(
+    posted_entry.id,
+    'Revised Entry Title',
+    posted_entry.content,
+    posted_entry.categories
+  )
 
   # Delete entry
   blog.delete_entry(updated_entry.id)
@@ -148,8 +152,8 @@ end
 ### Blog
 
 ```ruby
-client.title        # Get the blog title
-client.author_name  # Get the blog author name
+client.title       # Get the blog title
+client.author_name # Get the blog author name
 ```
 
 ### Feeds
@@ -157,16 +161,16 @@ client.author_name  # Get the blog author name
 ```ruby
 feed = client.next_feed # Get the first feed when no argument is passed
 feed.uri
-feed.next_uri     # The next feed URI
+feed.next_uri    # The next feed URI
 feed.title
 feed.author_name
-feed.update       # Updated datetime
+feed.update      # Updated datetime
 
-feed.entries  # entries in the feed
+feed.entries # entries in the feed
 feed.each_entry do |entry|
   # ...
 end
-feed.has_next?  # true if the next page exists
+feed.has_next? # true if the next page exists
 next_feed = client.next_feed(feed)
 ```
 
@@ -174,38 +178,41 @@ next_feed = client.next_feed(feed)
 
 ```ruby
 client.get_entry('0000000000000000000') # Get the entry specifed by its ID
-client.entries      # Get blog entries in the first page
-client.entries(1)   # Get blog entries in the first and the second page
-client.all_entries  # Get all entries in the blog
+client.entries     # Get blog entries in the first page
+client.entries(1)  # Get blog entries in the first and the second page
+client.all_entries # Get all entries in the blog
 
-entry = client.post_entry('Example Title',  # title
-                          'This is the **example** entry.',  # content
-                          ['Ruby', 'Rails'],  # categories
-                          'yes'  # draft
-                         )
+entry = client.post_entry(
+  'Example Title',                  # title
+  'This is the **example** entry.', # content
+  ['Ruby', 'Rails'],                # categories
+  'yes'                             # draft
+)
 entry.id
 entry.uri
 entry.edit_uri
 entry.author_name
-entry.title        #=> 'Example Title'
-entry.content      #=> 'This is the **example** entry.'
-entry.draft        #=> 'yes'
-entry.draft?       #=> true
-entry.categories   #=> ['Ruby', 'Rails']
-entry.updated      # Updated datetime
+entry.title       #=> 'Example Title'
+entry.content     #=> 'This is the **example** entry.'
+entry.draft       #=> 'yes'
+entry.draft?      #=> true
+entry.categories  #=> ['Ruby', 'Rails']
+entry.updated     # Updated datetime
 
-client.update_entry(entry.id,
-                    entry.title,
-                    'This is the **modified** example entry.',
-                    entry.categories,
-                    'no')
+client.update_entry(
+  entry.id,
+  entry.title,
+  'This is the **modified** example entry.',
+  entry.categories,
+  'no'
+)
 client.delete_entry(entry.id)
 ```
 
 ### Categories
 
 ```ruby
-categories = client.categories  # Get categories registered in the blog
+categories = client.categories # Get categories registered in the blog
 categories.each do |cat|
   puts cat
 end
