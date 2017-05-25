@@ -10,6 +10,7 @@ class AccessTokenGetter
   SITE_URI = 'https://www.hatena.com'
   REQUEST_TOKEN_URI = '/oauth/initiate?scope=read_public%2Cread_private%2Cwrite_public%2Cwrite_private'
   ACCESS_TOKEN_URI = '/oauth/token'
+  AUTHORIZE_URI = 'https://www.hatena.ne.jp/oauth/authorize'
 
   def initialize(consumer_key, consumer_secret)
     @consumer_key    = consumer_key
@@ -19,7 +20,8 @@ class AccessTokenGetter
                                     oauth_callback: 'oob',
                                     site: SITE_URI,
                                     request_token_url: REQUEST_TOKEN_URI,
-                                    access_token_url: ACCESS_TOKEN_URI)
+                                    access_token_url: ACCESS_TOKEN_URI,
+                                    authorize_url: AUTHORIZE_URI)
   end
 
   def get_request_token
