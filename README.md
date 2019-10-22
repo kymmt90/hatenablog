@@ -1,6 +1,6 @@
 # Hatenablog
 
-[![Gem Version](https://badge.fury.io/rb/hatenablog.svg)](https://badge.fury.io/rb/hatenablog) [![Build Status](https://travis-ci.org/kymmt90/hatenablog.svg?branch=master)](https://travis-ci.org/kymmt90/hatenablog)
+[![Gem Version](https://badge.fury.io/rb/hatenablog.svg)](https://badge.fury.io/rb/hatenablog) [![Build Status](https://github.com/kymmt90/hatenablog/workflows/build/badge.svg)](https://github.com/kymmt90/hatenablog/actions?workflow=build)
 [![Code Climate](https://codeclimate.com/github/kymmt90/hatenablog/badges/gpa.svg)](https://codeclimate.com/github/kymmt90/hatenablog)
 [![Test Coverage](https://codeclimate.com/github/kymmt90/hatenablog/badges/coverage.svg)](https://codeclimate.com/github/kymmt90/hatenablog/coverage)
 
