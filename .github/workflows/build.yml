@@ -1,0 +1,31 @@
+name: build
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby: ['2.4.x', '2.5.x', '2.6.x']
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Ruby
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby }}
+    - name: Install Bundler
+      run: gem install bundler
+    - name: Install dependencies
+      run: bundle install -j4
+    - name: Run test
+      env:
+        TZ: Asia/Tokyo
+      run: bundle exec rake
+    - name: Report test coverage
+      env:
+        CC_TEST_REPORTER_ID: 309cf0784d00d2a6009566d28be111a8a0280cdeb2da280225eedf577b16beb5
+      run: |
+        curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+        chmod +x ./cc-test-reporter
+        ./cc-test-reporter after-build
