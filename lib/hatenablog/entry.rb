@@ -19,6 +19,7 @@ module Hatenablog
         define_method(method) do |*args, &block|
           result = send(origin_method, *args, &block)
           send(hook)
+          result
         end
       end
     end
@@ -27,8 +28,9 @@ module Hatenablog
   class Entry
     extend AfterHook
 
-    attr_accessor :uri, :author_name, :title, :content, :draft, :categories
+    attr_accessor :uri, :author_name, :title, :content, :draft
     attr_reader   :edit_uri, :id, :updated
+    attr_writer :categories
 
     def updated=(date)
       @updated = Time.parse(date)
@@ -130,8 +132,10 @@ module Hatenablog
       @content     = @document.at_css('content').content
       @draft       = @document.at_css('entry app|control app|draft').content
       @categories  = parse_categories
-      unless @document.at_css('entry updated').nil?
+      if @document.at_css('entry updated')
         @updated = Time.parse(@document.at_css('entry updated').content)
+      else
+        @updated = nil
       end
     end
 
