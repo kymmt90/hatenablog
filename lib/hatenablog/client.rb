@@ -212,10 +212,12 @@ module Hatenablog
       @page = page
     end
 
-    def each
+    def each(&block)
+      return enum_for(__method__) unless block_given?
+
       current_page = 0
       until (@page && current_page > @page) || !(feed = @client.next_feed(feed))
-        feed.entries.each { |entry| yield entry }
+        feed.entries.each { |entry| block.call(entry) }
         current_page += 1
       end
     end

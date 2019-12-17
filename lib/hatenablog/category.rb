@@ -15,9 +15,11 @@ module Hatenablog
       @categories.dup
     end
 
-    def each
+    def each(&block)
+      return enum_for(__method__) unless block_given?
+
       @categories.each do |category|
-        yield category
+        block.call(category)
       end
     end
 
