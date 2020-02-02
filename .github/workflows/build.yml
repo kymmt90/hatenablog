@@ -8,6 +8,9 @@ jobs:
     strategy:
       matrix:
         ruby: ['2.4.x', '2.5.x', '2.6.x', '2.7.x']
+        include:
+          - ruby: '2.7.x'
+            report-coverage: true
     steps:
     - uses: actions/checkout@v1
     - name: Set up Ruby
@@ -18,14 +21,15 @@ jobs:
       run: gem install bundler
     - name: Install dependencies
       run: bundle install -j4
+    - name: Test & publish code coverage
+      if: matrix.report-coverage
+      uses: paambaati/codeclimate-action@v2.4.0
+      env:
+        CC_TEST_REPORTER_ID: 309cf0784d00d2a6009566d28be111a8a0280cdeb2da280225eedf577b16beb5
+      with:
+        coverageCommand: bundle exec rake
     - name: Run test
+      if: "!matrix.report-coverage"
       env:
         TZ: Asia/Tokyo
       run: bundle exec rake
-    - name: Report test coverage
-      env:
-        CC_TEST_REPORTER_ID: 309cf0784d00d2a6009566d28be111a8a0280cdeb2da280225eedf577b16beb5
-      run: |
-        curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-        chmod +x ./cc-test-reporter
-        ./cc-test-reporter after-build
