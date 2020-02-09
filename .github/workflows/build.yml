@@ -7,14 +7,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby: ['2.4.x', '2.5.x', '2.6.x', '2.7.x']
+        ruby: ['2.4', '2.5', '2.6', '2.7']
         include:
-          - ruby: '2.7.x'
+          - ruby: '2.7'
             report-coverage: true
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Ruby
-      uses: actions/setup-ruby@v1
+    - uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby }}
     - name: Install Bundler
