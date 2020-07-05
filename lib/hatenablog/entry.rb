@@ -89,6 +89,11 @@ module Hatenablog
       @document.to_s.gsub(/\"/, "'")
     end
 
+    # @return [String]
+    def formatted_content
+      @formatted_content
+    end
+
     def self.build_xml(uri, edit_uri, author_name, title, content, draft, categories, updated)
       builder = Nokogiri::XML::Builder.new(encoding: 'utf-8') do |xml|
         xml.entry('xmlns'     => 'http://www.w3.org/2005/Atom',
@@ -130,6 +135,8 @@ module Hatenablog
       @author_name = @document.at_css('author name').content
       @title       = @document.at_css('title').content
       @content     = @document.at_css('content').content
+      @formatted_content = @document.xpath('//hatena:formatted-content', hatena: 'http://www.hatena.ne.jp/info/xmlns#')[0]
+      @formatted_content = @formatted_content.content if @formatted_content
       @draft       = @document.at_css('entry app|control app|draft').content
       @categories  = parse_categories
       if @document.at_css('entry updated')

@@ -176,6 +176,10 @@ module Hatenablog
         assert_false @got_entry.draft?
       end
 
+      test 'get the formatted content' do
+        assert_equal "<p>This is the test entry.</p>\n  ", @got_entry.formatted_content
+      end
+
       def setup_entry
         @sut = Hatenablog::Client.create('test/fixture/test_conf.yml')
         requester = Object.new
