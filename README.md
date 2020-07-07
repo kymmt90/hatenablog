@@ -192,12 +192,13 @@ entry.id
 entry.uri
 entry.edit_uri
 entry.author_name
-entry.title       #=> 'Example Title'
-entry.content     #=> 'This is the **example** entry.'
-entry.draft       #=> 'yes'
-entry.draft?      #=> true
-entry.categories  #=> ['Ruby', 'Rails']
-entry.updated     # Updated datetime
+entry.title             #=> 'Example Title'
+entry.content           #=> 'This is the **example** entry.'
+entry.formatted_content #=> '<p>This is the <strong>example</strong> entry.</p>'
+entry.draft             #=> 'yes'
+entry.draft?            #=> true
+entry.categories        #=> ['Ruby', 'Rails']
+entry.updated           # Updated datetime
 
 client.update_entry(
   entry.id,
