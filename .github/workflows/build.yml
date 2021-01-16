@@ -7,9 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby: ['2.4', '2.5', '2.6', '2.7']
+        ruby: ['2.4', '2.5', '2.6', '2.7', '3.0']
         include:
-          - ruby: '2.7'
+          - ruby: '3.0'
             report-coverage: true
     steps:
     - uses: actions/checkout@v2
@@ -20,7 +20,7 @@ jobs:
     - run: bundle install -j4
     - name: Run tests and report test coverage
       if: matrix.report-coverage
-      uses: paambaati/codeclimate-action@v2.4.0
+      uses: paambaati/codeclimate-action@v2.7.5
       env:
         CC_TEST_REPORTER_ID: 309cf0784d00d2a6009566d28be111a8a0280cdeb2da280225eedf577b16beb5
       with:
