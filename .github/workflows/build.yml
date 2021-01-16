@@ -1,6 +1,6 @@
 name: build
 
-on: [pull_request]
+on: [push, pull_request]
 
 jobs:
   build:
@@ -25,6 +25,7 @@ jobs:
         CC_TEST_REPORTER_ID: 309cf0784d00d2a6009566d28be111a8a0280cdeb2da280225eedf577b16beb5
       with:
         coverageCommand: bundle exec rake
+        coverageLocations: ${{github.workspace}}/coverage/coverage.json:simplecov
     - name: Run tests
       if: "!matrix.report-coverage"
       env:
