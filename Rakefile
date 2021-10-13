@@ -11,6 +11,7 @@ Rake::TestTask.new do |t|
   t.libs << "test"
   t.test_files = Dir["test/hatenablog/*_test.rb"]
   t.verbose = true
+  t.warning = true
 end
 
 YARD::Rake::YardocTask.new do |t|
