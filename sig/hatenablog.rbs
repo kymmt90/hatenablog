@@ -1,0 +1,233 @@
+# TypeProf 0.20.0
+
+# Revealed types
+#  /Users/kymmt90/.rbenv/versions/3.0.0/lib/ruby/gems/3.0.0/gems/nokogiri-1.11.2-x86_64-darwin/lib/nokogiri/html/element_description_defaults.rb:664 #=> String
+
+# Classes
+module Hatenablog
+  VERSION: String
+
+  class Category
+    @document: Nokogiri::XML::Document
+    @categories: Array[untyped]
+    @fixed: String
+
+    def self.load_xml: (String? xml) -> Category
+    def categories: -> Array[untyped]
+    def each: ?{ (bot) -> Array[untyped] } -> (Array[untyped] | Enumerator[bot, untyped])
+    def fixed?: -> bool
+
+    private
+    def initialize: (String? xml) -> void
+    def parse_document: -> String?
+  end
+
+  class Client
+    DEFAULT_CONFIG_PATH: String
+    COLLECTION_URI: String
+    MEMBER_URI: String
+    CATEGORY_URI: String
+    @user_id: nil
+    @blog_id: nil
+
+    attr_writer requester: Object | Requester::Basic | Requester::OAuth
+    def self.create: (?String config_file) -> Client
+    def initialize: (?nil config) ?{ (Configuration) -> String } -> void
+    def title: -> untyped
+    def author_name: -> untyped
+    def entries: (?Integer page) -> Entries
+    def all_entries: -> Entries
+    def next_feed: (?nil feed) -> nil
+    def categories: -> Array[untyped]
+    def get_entry: (String entry_id) -> Entry
+    def post_entry: (?String title, ?String content, ?Array[untyped] categories, ?String draft) -> untyped
+    def update_entry: (String entry_id, ?String title, ?String content, ?Array[untyped] categories, ?String draft, ?String updated) -> Entry
+    def delete_entry: (String entry_id) -> untyped
+    def collection_uri: (?nil user_id, ?nil blog_id) -> String
+    def member_uri: (String entry_id, ?nil user_id, ?nil blog_id) -> String
+    def category_doc_uri: (?nil user_id, ?nil blog_id) -> String
+    def entry_xml: (?String title, ?String content, ?Array[String] categories, ?String draft, ?String updated, ?String? author_name) -> String
+
+    private
+    def get: (String uri) -> untyped
+    def get_collection: (?String uri) -> untyped
+    def get_category_doc: -> untyped
+    def post: (String entry_xml, ?String uri) -> untyped
+    def put: (String entry_xml, String uri) -> untyped
+    def delete: (String uri) -> untyped
+  end
+
+  class Entries
+    include Enumerable
+    @client: Client
+    @page: Integer?
+
+    def initialize: (Client client, ?Integer? page) -> void
+    def each: ?{ (untyped) -> untyped } -> ((Enumerator[bot, untyped] | Enumerator[untyped, untyped])?)
+  end
+
+  class Configuration < OpenStruct
+    OAUTH_KEYS: [:consumer_key, :consumer_secret, :access_token, :access_token_secret, :user_id, :blog_id]
+    BASIC_KEYS: [:api_key, :user_id, :blog_id]
+
+    def self.create: (String config_file) -> Configuration
+    def check_valid_or_raise: -> Configuration
+
+    private
+    def lacking_keys: -> (Array[:access_token | :access_token_secret | :api_key | :blog_id | :consumer_key | :consumer_secret | :user_id])
+  end
+
+  class ConfigurationError < StandardError
+  end
+
+  module AfterHook
+    def after_hook: (:update_xml hook, *:author_name= | :categories= | :content= | :draft= | :edit_uri= | :title= | :updated= | :uri= methods) -> [:uri=, :edit_uri=, :author_name=, :title=, :content=, :updated=, :draft=, :categories=]
+    def uri=: (*untyped args) -> untyped
+    def edit_uri=: (*untyped args) -> untyped
+    def author_name=: (*untyped args) -> untyped
+    def title=: (*untyped args) -> untyped
+    def content=: (*untyped args) -> untyped
+    def updated=: (*untyped args) -> untyped
+    def draft=: (*untyped args) -> untyped
+    def categories=: (*untyped args) -> untyped
+  end
+
+  class Entry
+    extend AfterHook
+    @document: Nokogiri::XML::Document
+    @formatted_content: untyped
+
+    attr_accessor uri: String
+    attr_accessor author_name: String
+    attr_accessor title: String
+    attr_accessor content: String
+    attr_accessor draft: String
+    attr_reader edit_uri: String
+    attr_reader id: String?
+    attr_reader updated: nil
+    attr_writer categories: Array[String]
+    def updated=: (String date) -> untyped
+    def edit_uri=: (String uri) -> String?
+    def self.load_xml: (String? xml) -> Entry
+    def self.create: (?uri: String, ?edit_uri: String, ?author_name: String, ?title: String, ?content: String, ?draft: String, ?categories: Array[String], ?updated: String) ?{ (Entry) -> String } -> Entry
+    def draft?: -> bool
+    def categories: -> Array[String]
+    def each_category: ?{ (String) -> Array[untyped] } -> Array[String]
+    def to_xml: -> String
+    def formatted_content: -> untyped
+    def self.build_xml: (String uri, String edit_uri, String author_name, String title, String content, String draft, Array[String] categories, String updated) -> String
+
+    private
+    def initialize: (String? xml) -> void
+    def parse_document: -> nil
+    def parse_categories: -> Array[untyped]
+    def update_xml: -> Array[String]?
+    def categories_modified?: (Nokogiri::XML::NodeSet old_categories, Array[String] new_categories) -> untyped
+  end
+
+  class Feed
+    @document: Nokogiri::XML::Document
+    @entries: Array[untyped]
+
+    attr_reader uri: untyped
+    attr_reader next_uri: String
+    attr_reader title: untyped
+    attr_reader author_name: untyped
+    attr_reader updated: untyped
+    def self.load_xml: (String? xml) -> Feed
+    def entries: -> Array[untyped]
+    def each_entry: ?{ (bot) -> untyped } -> Array[untyped]
+    def has_next?: -> bool
+
+    private
+    def initialize: (String? xml) -> void
+    def parse_document: -> Array[untyped]
+    def parse_entry: -> Array[untyped]
+  end
+
+  module Requester
+    ATOM_CONTENT_TYPE: String
+    DEFAULT_HEADER: Hash[String, String]
+
+    def self.create: (Configuration? config) -> (Basic | OAuth)
+
+    class RequestError < StandardError
+    end
+
+    class OAuth
+      @access_token: OAuth::AccessToken | Object
+
+      def initialize: (OAuth::AccessToken | Object access_token) -> void
+      def get: (String uri) -> untyped
+      def post: (String uri, ?String body, ?Hash[String, String] headers) -> untyped
+      def put: (String uri, ?String body, ?Hash[String, String] headers) -> untyped
+      def delete: (String uri, ?Hash[String, String] headers) -> untyped
+
+      private
+      def request: (:delete | :get | :post | :put method, String uri, ?body: String?, ?headers: Hash[String, String]?) -> untyped
+    end
+
+    class Basic
+      METHODS: {get: singleton(Net::HTTP::Get), post: singleton(Net::HTTP::Post), put: singleton(Net::HTTP::Put), delete: singleton(Net::HTTP::Delete)}
+      @user_id: String?
+      @api_key: String?
+
+      def initialize: (String? user_id, String? api_key) -> void
+      def get: (String uri) -> untyped
+      def post: (String uri, String body, ?nil headers) -> untyped
+      def put: (String uri, String body, ?nil headers) -> untyped
+      def delete: (String uri, ?nil headers) -> untyped
+
+      private
+      def request: (String uri, :delete | :get | :post | :put method, ?body: String?, ?headers: nil) -> untyped
+    end
+  end
+
+  class CategoryTest
+    self.@xml: String?
+    self.@sut: Category
+  end
+
+  class ClientTest
+    self.@sut: Client
+    @sut: Client
+    self.@sut_feed1: bot
+    self.@sut_feed2: bot
+    @sut_feed1: Feed
+    @sut_feed2: Feed
+    self.@got_entry: Entry
+    self.@got_categories: Array[untyped]
+
+    def setup_feed: -> Object
+                  | -> Object
+    def setup_feeds: -> Object
+    def setup_entry: -> Object
+    def setup_post_entry_mock: -> Object
+    def setup_update_entry_mock: -> Object
+    def setup_delete_entry_mock: -> Object
+    def setup_categories: -> Object
+  end
+
+  class ConfigurationTest
+    self.@sut: Configuration
+  end
+
+  class EntryTest
+    self.@xml: String?
+    self.@sut: Entry
+  end
+
+  class FeedTest
+    self.@xml: String?
+    self.@sut: Feed
+  end
+
+  class RequesterTest
+    URL: String
+    @sut: Requester::Basic | Requester::OAuth
+    self.@sut: bot
+
+    def setup_errors: -> Requester::OAuth
+    def setup_basic_auth: (?error: false) -> untyped
+  end
+end
