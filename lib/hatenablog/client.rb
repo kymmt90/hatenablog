@@ -24,9 +24,9 @@ module Hatenablog
       yield blog
     end
 
-    def initialize(config = nil)
+    def initialize(config = Configuration.new)
       if block_given?
-        yield config = Configuration.new
+        yield config
         config.check_valid_or_raise
       end
       @requester = Requester.create(config)
