@@ -32,7 +32,7 @@ module Hatenablog
 
     attr_writer requester: Object | Requester::Basic | Requester::OAuth
     def self.create: (?String config_file) -> Client
-    def initialize: (?nil config) ?{ (Configuration) -> String } -> void
+    def initialize: (?Configuration config) ?{ (Configuration) -> String } -> void
     def title: -> untyped
     def author_name: -> untyped
     def entries: (?Integer page) -> Entries
