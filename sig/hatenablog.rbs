@@ -77,6 +77,9 @@ module Hatenablog
     def lacking_keys: -> (Array[:access_token | :access_token_secret | :api_key | :blog_id | :consumer_key | :consumer_secret | :user_id])
   end
 
+  class OpenStruct
+  end
+
   class ConfigurationError < StandardError
   end
 
