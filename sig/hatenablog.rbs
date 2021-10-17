@@ -27,8 +27,8 @@ module Hatenablog
     COLLECTION_URI: String
     MEMBER_URI: String
     CATEGORY_URI: String
-    @user_id: nil
-    @blog_id: nil
+    @user_id: String
+    @blog_id: String
 
     attr_writer requester: Object | Requester::Basic | Requester::OAuth
     def self.create: (?String config_file) ?{ (Client) -> untyped } -> Client
@@ -72,6 +72,14 @@ module Hatenablog
 
     def self.create: (String config_file) -> Configuration
     def check_valid_or_raise: -> Configuration
+
+    def consumer_key: () -> String
+    def consumer_secret: () -> String
+    def access_token: () -> String
+    def access_token_secret: () -> String
+    def user_id: () -> String
+    def blog_id: () -> String
+    def api_key: () -> String
 
     private
     def lacking_keys: -> (Array[:access_token | :access_token_secret | :api_key | :blog_id | :consumer_key | :consumer_secret | :user_id])
