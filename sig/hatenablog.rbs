@@ -30,7 +30,7 @@ module Hatenablog
     @user_id: String
     @blog_id: String
 
-    attr_writer requester: Object | Requester::Basic | Requester::OAuth
+    attr_writer requester: Requester::Basic | Requester::OAuth
     def self.create: (?String config_file) ?{ (Client) -> untyped } -> Client
     def initialize: (?Configuration config) ?{ (Configuration) -> String } -> void
     def title: -> untyped
