@@ -37,7 +37,7 @@ module Hatenablog
     def author_name: -> untyped
     def entries: (?Integer page) -> Entries
     def all_entries: -> Entries
-    def next_feed: (?nil feed) -> nil
+    def next_feed: (?Feed feed) -> Feed?
     def categories: -> Array[untyped]
     def get_entry: (String entry_id) -> Entry
     def post_entry: (?String title, ?String content, ?Array[untyped] categories, ?String draft) -> untyped
