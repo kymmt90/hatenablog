@@ -112,7 +112,7 @@ module Hatenablog
     attr_accessor draft: String
     attr_reader edit_uri: String
     attr_reader id: String?
-    attr_reader updated: nil
+    attr_reader updated: Time?
     attr_writer categories: Array[String]
     def updated=: (String date) -> untyped
     def edit_uri=: (String uri) -> String?
