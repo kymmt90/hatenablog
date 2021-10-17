@@ -242,3 +242,19 @@ module Hatenablog
     def setup_basic_auth: (?error: false) -> untyped
   end
 end
+
+module Net
+  class HTTP
+    class Get
+    end
+
+    class Post
+    end
+
+    class Put
+    end
+
+    class Delete
+    end
+  end
+end
