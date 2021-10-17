@@ -257,5 +257,6 @@ module Net
 end
 
 class OpenStruct
-  def initialize: (?Hash? hash) -> OpenStruct
+  def initialize: (?Hash[untyped, untyped]? hash) -> OpenStruct
+  def []: (String | Symbol) -> Object
 end
