@@ -259,4 +259,5 @@ end
 class OpenStruct
   def initialize: (?Hash[untyped, untyped]? hash) -> OpenStruct
   def []: (String | Symbol) -> Object
+  def to_h: -> Hash[Symbol, Object]
 end
