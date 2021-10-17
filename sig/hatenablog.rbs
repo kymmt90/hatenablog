@@ -157,7 +157,7 @@ module Hatenablog
     ATOM_CONTENT_TYPE: String
     DEFAULT_HEADER: Hash[String, String]
 
-    def self.create: (Configuration? config) -> (Basic | OAuth)
+    def self.create: (Configuration config) -> (Basic | OAuth)
 
     class RequestError < StandardError
     end
