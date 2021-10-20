@@ -242,6 +242,8 @@ end
 
 module Net
   class HTTP
+    def self.start: (untyped address, ?untyped port, ?untyped proxy_addr, ?untyped proxy_port, ?untyped proxy_user, ?untyped proxy_pass) -> Net::HTTP
+
     class Get
     end
 
