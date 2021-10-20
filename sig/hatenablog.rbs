@@ -261,3 +261,8 @@ class OpenStruct
   def []: (String | Symbol) -> Object
   def to_h: -> Hash[Symbol, Object]
 end
+
+module OAuth
+  class AccessToken
+  end
+end
