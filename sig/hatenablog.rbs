@@ -58,7 +58,7 @@ module Hatenablog
   end
 
   class Entries
-    include Enumerable
+    include Enumerable[Entry]
     @client: Client
     @page: Integer?
 
