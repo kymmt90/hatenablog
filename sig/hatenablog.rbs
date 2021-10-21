@@ -177,10 +177,10 @@ module Hatenablog
 
     class Basic
       METHODS: {get: singleton(Net::HTTP::Get), post: singleton(Net::HTTP::Post), put: singleton(Net::HTTP::Put), delete: singleton(Net::HTTP::Delete)}
-      @user_id: String?
-      @api_key: String?
+      @user_id: String
+      @api_key: String
 
-      def initialize: (String? user_id, String? api_key) -> void
+      def initialize: (String user_id, String api_key) -> void
       def get: (String uri) -> untyped
       def post: (String uri, String body, ?nil headers) -> untyped
       def put: (String uri, String body, ?nil headers) -> untyped
@@ -241,7 +241,17 @@ module Hatenablog
 end
 
 module Net
-  class HTTPRequest
+  class HTTPGenericRequest
+    def body=: (untyped body) -> void
+  end
+
+  module HTTPHeader
+    def basic_auth: (String account, String password) -> Array[String]
+    def content_type=: (String content_type) -> void
+  end
+
+  class HTTPRequest < HTTPGenericRequest
+    include HTTPHeader
   end
 
   class HTTP
