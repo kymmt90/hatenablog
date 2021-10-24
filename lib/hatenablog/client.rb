@@ -161,7 +161,7 @@ module Hatenablog
             xml.name author_name
           end
           xml.content(content, type: 'text/x-markdown')
-          xml.updated updated unless updated.empty? || updated.nil?
+          xml.updated updated unless updated.nil? || updated.empty?
           categories.each do |category|
             xml.category(term: category)
           end
