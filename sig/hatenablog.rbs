@@ -46,7 +46,7 @@ module Hatenablog
     def collection_uri: (?nil user_id, ?nil blog_id) -> String
     def member_uri: (String entry_id, ?nil user_id, ?nil blog_id) -> String
     def category_doc_uri: (?nil user_id, ?nil blog_id) -> String
-    def entry_xml: (?String title, ?String content, ?Array[String] categories, ?String draft, ?String updated, ?String? author_name) -> String
+    def entry_xml: (?String title, ?String content, ?Array[String] categories, ?String draft, ?String? updated, ?String? author_name) -> String
 
     private
     def get: (String uri) -> untyped
