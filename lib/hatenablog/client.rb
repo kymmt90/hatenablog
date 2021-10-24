@@ -214,7 +214,7 @@ module Hatenablog
     end
 
     def each(&block)
-      return enum_for(__method__) unless block_given?
+      return enum_for unless block_given?
 
       if @fetch == :all
         while feed = @client.next_feed(feed)
