@@ -19,7 +19,7 @@ module Hatenablog
       return enum_for unless block_given?
 
       @categories.each do |category|
-        block.call(category)
+        block&.call(category)
       end
     end
 
