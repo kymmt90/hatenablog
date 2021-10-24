@@ -124,7 +124,7 @@ module Hatenablog
     def each_category: ?{ (String) -> Array[untyped] } -> Array[String]
     def to_xml: -> String
     def formatted_content: -> untyped
-    def self.build_xml: (String uri, String edit_uri, String author_name, String title, String content, String draft, Array[String] categories, String updated) -> String
+    def self.build_xml: (String uri, String edit_uri, String author_name, String title, String content, String draft, Array[String]? categories, String? updated) -> String
 
     private
     def initialize: (String? xml) -> void
