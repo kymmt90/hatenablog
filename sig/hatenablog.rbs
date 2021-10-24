@@ -60,9 +60,10 @@ module Hatenablog
   class Entries
     include Enumerable[Entry]
     @client: Client
-    @page: Integer?
+    @page: Integer
+    @fetch: :partial | :all
 
-    def initialize: (Client client, ?Integer? page) -> void
+    def initialize: (Client client, ?Integer page, ?(:partial | :all) fetch) -> void
     def each: ?{ (untyped) -> untyped } -> ((Enumerator[bot, untyped] | Enumerator[untyped, untyped])?)
   end
 

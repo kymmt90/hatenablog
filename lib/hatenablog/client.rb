@@ -59,7 +59,7 @@ module Hatenablog
     # Get all blog entries.
     # @return [Hatenablog::Entries] enumerator of blog entries
     def all_entries
-      Entries.new(self, nil)
+      Entries.new(self, 0, :all)
     end
 
     # Get the next feed of the given feed.
@@ -207,19 +207,29 @@ module Hatenablog
   class Entries
     include Enumerable
 
-    def initialize(client, page = 0)
+    def initialize(client, page = 0, fetch = :partial)
       @client = client
       @page = page
+      @fetch = fetch
     end
 
     def each(&block)
       return enum_for(__method__) unless block_given?
 
+      if @fetch == :all
+        while feed = @client.next_feed(feed)
+          feed.entries.each { |entry| block.call(entry) }
+        end
+
+        return
+      end
+
       current_page = 0
-      until (@page && current_page > @page) || !(feed = @client.next_feed(feed))
+      begin
+        feed = @client.next_feed(feed)
         feed.entries.each { |entry| block.call(entry) }
         current_page += 1
-      end
+      end while current_page <= @page
     end
   end
 end
