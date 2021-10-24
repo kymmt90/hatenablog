@@ -80,6 +80,7 @@ module Hatenablog
     def user_id: () -> String
     def blog_id: () -> String
     def api_key: () -> String
+    def auth_type: () -> String
 
     private
     def lacking_keys: -> (Array[:access_token | :access_token_secret | :api_key | :blog_id | :consumer_key | :consumer_secret | :user_id])
