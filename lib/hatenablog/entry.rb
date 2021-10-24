@@ -164,7 +164,7 @@ module Hatenablog
       @document.at_css('entry app|control app|draft').content = @draft
 
       unless @updated.nil? || @document.at_css('entry updated').nil?
-        @document.at_css('entry updated').content = @updated.iso8601
+        @document.at_css('entry updated').content = @updated&.iso8601
       end
 
       unless @categories.nil?
