@@ -90,7 +90,7 @@ module Hatenablog
   end
 
   module AfterHook
-    # def after_hook: (:update_xml hook, *:author_name= | :categories= | :content= | :draft= | :edit_uri= | :title= | :updated= | :uri= methods) -> [:uri=, :edit_uri=, :author_name=, :title=, :content=, :updated=, :draft=, :categories=]
+    def after_hook: (Symbol hook, *Symbol methods) -> Array[Symbol]
     def uri=: (*untyped args) -> untyped
     def edit_uri=: (*untyped args) -> untyped
     def author_name=: (*untyped args) -> untyped
