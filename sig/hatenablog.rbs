@@ -164,9 +164,9 @@ module Hatenablog
     end
 
     class OAuth
-      @access_token: OAuth::AccessToken | Object
+      @access_token: ::OAuth::AccessToken | Object
 
-      def initialize: (OAuth::AccessToken | Object access_token) -> void
+      def initialize: (::OAuth::AccessToken | Object access_token) -> void
       def get: (String uri) -> untyped
       def post: (String uri, ?String body, ?Hash[String, String] headers) -> untyped
       def put: (String uri, ?String body, ?Hash[String, String] headers) -> untyped
