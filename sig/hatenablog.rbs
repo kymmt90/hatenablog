@@ -253,6 +253,8 @@ module Net
 
   class HTTPRequest < HTTPGenericRequest
     include HTTPHeader
+
+    def self.new: (untyped uri, ?untyped? initheader) -> Net::HTTPRequest
   end
 
   class HTTP
