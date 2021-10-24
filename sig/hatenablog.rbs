@@ -284,5 +284,6 @@ end
 
 module OAuth
   class AccessToken
+    def initialize: (untyped, untyped, ?untyped) -> void
   end
 end
