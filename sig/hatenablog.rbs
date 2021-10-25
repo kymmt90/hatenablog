@@ -196,54 +196,6 @@ module Hatenablog
       def request: (String uri, :delete | :get | :post | :put method, ?body: String?, ?headers: nil) -> untyped
     end
   end
-
-  class CategoryTest
-    self.@xml: String?
-    self.@sut: Category
-  end
-
-  class ClientTest
-    self.@sut: Client
-    @sut: Client
-    self.@sut_feed1: bot
-    self.@sut_feed2: bot
-    @sut_feed1: Feed
-    @sut_feed2: Feed
-    self.@got_entry: Entry
-    self.@got_categories: Array[untyped]
-
-    def setup_feed: -> Object
-                  | -> Object
-    def setup_feeds: -> Object
-    def setup_entry: -> Object
-    def setup_post_entry_mock: -> Object
-    def setup_update_entry_mock: -> Object
-    def setup_delete_entry_mock: -> Object
-    def setup_categories: -> Object
-  end
-
-  class ConfigurationTest
-    self.@sut: Configuration
-  end
-
-  class EntryTest
-    self.@xml: String?
-    self.@sut: Entry
-  end
-
-  class FeedTest
-    self.@xml: String?
-    self.@sut: Feed
-  end
-
-  class RequesterTest
-    URL: String
-    @sut: Requester::Basic | Requester::OAuth
-    self.@sut: bot
-
-    def setup_errors: -> Requester::OAuth
-    def setup_basic_auth: (?error: false) -> untyped
-  end
 end
 
 module Net
