@@ -178,7 +178,7 @@ module Hatenablog
       def delete: (String uri, ?Hash[String, String] headers) -> untyped
 
       private
-      def request: (:delete | :get | :post | :put method, String uri, ?body: String?, ?headers: Hash[String, String]?) -> untyped
+      def request: (:delete | :get | :post | :put method, String uri, ?body: String?, ?headers: Hash[String, String]) -> untyped
     end
 
     class Basic
@@ -188,51 +188,13 @@ module Hatenablog
 
       def initialize: (String user_id, String api_key) -> void
       def get: (String uri) -> untyped
-      def post: (String uri, String body, ?nil headers) -> untyped
-      def put: (String uri, String body, ?nil headers) -> untyped
-      def delete: (String uri, ?nil headers) -> untyped
+      def post: (String uri, String body, ?Hash[String, String] headers) -> untyped
+      def put: (String uri, String body, ?Hash[String, String] headers) -> untyped
+      def delete: (String uri, ?Hash[String, String] headers) -> untyped
 
       private
-      def request: (String uri, :delete | :get | :post | :put method, ?body: String?, ?headers: nil) -> untyped
+      def request: (String uri, :delete | :get | :post | :put method, ?body: String?, ?headers: Hash[String, String]) -> untyped
     end
-  end
-end
-
-module Net
-  class HTTPGenericRequest
-    def body=: (untyped body) -> void
-  end
-
-  module HTTPHeader
-    def basic_auth: (String account, String password) -> Array[String]
-    def content_type=: (String content_type) -> void
-  end
-
-  class HTTPRequest < HTTPGenericRequest
-    include HTTPHeader
-
-    def self.new: (untyped uri, ?untyped? initheader) -> Net::HTTPRequest
-  end
-
-  class HTTP
-    def self.start: (untyped address, ?untyped port, ?untyped proxy_addr, ?untyped proxy_port, ?untyped proxy_user, ?untyped proxy_pass) -> Net::HTTP
-
-    def request: (Net::HTTPRequest request, ?untyped data) -> Net::HTTPResponse
-
-    class Get < HTTPRequest
-    end
-
-    class Post < HTTPRequest
-    end
-
-    class Put < HTTPRequest
-    end
-
-    class Delete < HTTPRequest
-    end
-  end
-
-  class HTTPResponse
   end
 end
 
