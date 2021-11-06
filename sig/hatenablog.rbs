@@ -140,22 +140,25 @@ module Hatenablog
 
   class Feed
     @document: Nokogiri::XML::Document
-    @entries: Array[untyped]
+    @entries: Array[Entry]
 
-    attr_reader uri: untyped
+    attr_reader uri: String
     attr_reader next_uri: String
-    attr_reader title: untyped
-    attr_reader author_name: untyped
-    attr_reader updated: untyped
-    def self.load_xml: (String? xml) -> Feed
-    def entries: -> Array[untyped]
-    def each_entry: ?{ (bot) -> untyped } -> Array[untyped]
-    def has_next?: -> bool
+    attr_reader title: String
+    attr_reader author_name: String
+    attr_reader updated: Time
+
+    def self.load_xml: (String xml) -> Feed
+
+    def entries: () -> Array[Entry]
+    def each_entry: () { (Entry) -> void } -> Array[Entry]
+    def has_next?: () -> bool
 
     private
-    def initialize: (String? xml) -> void
-    def parse_document: -> Array[untyped]
-    def parse_entry: -> Array[untyped]
+
+    def initialize: (String xml) -> void
+    def parse_document: () -> void
+    def parse_entry: () -> void
   end
 
   module Requester
