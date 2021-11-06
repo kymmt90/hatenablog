@@ -144,8 +144,6 @@ module Hatenablog
       else
         @updated = nil
       end
-
-      nil
     end
 
     def parse_categories

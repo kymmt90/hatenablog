@@ -107,6 +107,7 @@ module Hatenablog
 
   class Entry
     extend AfterHook
+
     @document: Nokogiri::XML::Document
     @formatted_content: untyped
 
@@ -115,27 +116,32 @@ module Hatenablog
     attr_accessor title: String
     attr_accessor content: String
     attr_accessor draft: String
+
     attr_reader edit_uri: String
     attr_reader id: String?
-    attr_reader updated: Time?
+    attr_reader updated : Time?
+
     attr_writer categories: Array[String]
-    def updated=: (String date) -> untyped
-    def edit_uri=: (String uri) -> String?
-    def self.load_xml: (String? xml) -> Entry
-    def self.create: (?uri: String, ?edit_uri: String, ?author_name: String, ?title: String, ?content: String, ?draft: String, ?categories: Array[String], ?updated: String) ?{ (Entry) -> String } -> Entry
-    def draft?: -> bool
-    def categories: -> Array[String]
-    def each_category: ?{ (String) -> Array[untyped] } -> Array[String]
-    def to_xml: -> String
-    def formatted_content: -> untyped
+
+    def self.load_xml: (String xml) -> Entry
+    def self.create: (?uri: String, ?edit_uri: String, ?author_name: String, ?title: String, ?content: String, ?draft: String, ?categories: Array[String], ?updated: String) ?{ (Entry) -> void } -> Entry
     def self.build_xml: (String uri, String edit_uri, String author_name, String title, String content, String draft, Array[String]? categories, String? updated) -> String
 
+    def updated=: (String date) -> Time?
+    def edit_uri=: (String uri) -> void
+    def draft?: () -> bool
+    def categories: () -> Array[String]
+    def each_category: () { (String) -> void } -> Array[String]
+    def to_xml: () -> String
+    def formatted_content: () -> untyped # result of Nokogiri::XML::NodeSet#[]
+
     private
-    def initialize: (String? xml) -> void
-    def parse_document: -> nil
-    def parse_categories: -> Array[untyped]
-    def update_xml: -> Array[String]?
-    def categories_modified?: (Nokogiri::XML::NodeSet old_categories, Array[String] new_categories) -> untyped
+
+    def initialize: (String xml) -> void
+    def parse_document: () -> void
+    def parse_categories: () -> Array[untyped]
+    def update_xml: () -> void
+    def categories_modified?: (Nokogiri::XML::NodeSet old_categories, Array[String] new_categories) -> bool
   end
 
   class Feed
