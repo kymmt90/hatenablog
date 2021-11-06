@@ -68,20 +68,22 @@ module Hatenablog
     OAUTH_KEYS: [:consumer_key, :consumer_secret, :access_token, :access_token_secret, :user_id, :blog_id]
     BASIC_KEYS: [:api_key, :user_id, :blog_id]
 
-    def self.create: (String config_file) -> Configuration
-    def check_valid_or_raise: -> Configuration
+    def self.create: (String) -> Configuration
+    def check_valid_or_raise: () -> Configuration
 
-    def consumer_key: () -> String
-    def consumer_secret: () -> String
-    def access_token: () -> String
-    def access_token_secret: () -> String
+    # attribute accessors allowed to define dynamically
+    def consumer_key: () -> untyped # String?
+    def consumer_secret: () -> untyped # String?
+    def access_token: () -> untyped # String?
+    def access_token_secret: () -> untyped # String?
     def user_id: () -> String
     def blog_id: () -> String
-    def api_key: () -> String
-    def auth_type: () -> String
+    def api_key: () -> untyped # String?
+    def auth_type: () -> untyped # String?
 
     private
-    def lacking_keys: -> (Array[:access_token | :access_token_secret | :api_key | :blog_id | :consumer_key | :consumer_secret | :user_id])
+
+    def lacking_keys: () -> (Array[:consumer_key | :consumer_secret | :access_token | :access_token_secret | :user_id | :blog_id | :api_key | :user_id | :blog_id])
   end
 
   class ConfigurationError < StandardError
