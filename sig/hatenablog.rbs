@@ -3,17 +3,20 @@ module Hatenablog
 
   class Category
     @document: Nokogiri::XML::Document
-    @categories: Array[untyped]
+    @categories: Array[String]
     @fixed: String
 
-    def self.load_xml: (String? xml) -> Category
-    def categories: -> Array[untyped]
-    def each: ?{ (bot) -> Array[untyped] } -> (Array[untyped] | Enumerator[bot, untyped])
-    def fixed?: -> bool
+    def self.load_xml: (String xml) -> Category
+
+    def categories: () -> Array[String]
+    def each: () -> Enumerator[untyped, self]
+            | () { (String) -> void } -> Array[String]
+    def fixed?: () -> bool
 
     private
-    def initialize: (String? xml) -> void
-    def parse_document: -> String?
+
+    def initialize: (String xml) -> void
+    def parse_document: () -> void
   end
 
   class Client
