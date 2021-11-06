@@ -168,31 +168,34 @@ module Hatenablog
     end
 
     class OAuth
-      @access_token: ::OAuth::AccessToken | Object
+      @access_token: ::OAuth::AccessToken
 
-      def initialize: (::OAuth::AccessToken | Object access_token) -> void
-      def get: (String uri) -> untyped
-      def post: (String uri, ?String body, ?Hash[String, String] headers) -> untyped
-      def put: (String uri, ?String body, ?Hash[String, String] headers) -> untyped
-      def delete: (String uri, ?Hash[String, String] headers) -> untyped
+      def initialize: (::OAuth::AccessToken access_token) -> void
+      def get: (String uri) -> Net::HTTPResponse
+      def post: (String uri, ?String body, ?Hash[String, String] headers) -> Net::HTTPResponse
+      def put: (String uri, ?String body, ?Hash[String, String] headers) -> Net::HTTPResponse
+      def delete: (String uri, ?Hash[String, String] headers) -> Net::HTTPResponse
 
       private
-      def request: (:delete | :get | :post | :put method, String uri, ?body: String?, ?headers: Hash[String, String]) -> untyped
+
+      def request: (:get | :post | :put | :delete method, String uri, ?body: String?, ?headers: Hash[String, String]?) -> Net::HTTPResponse
     end
 
     class Basic
       METHODS: {get: singleton(Net::HTTP::Get), post: singleton(Net::HTTP::Post), put: singleton(Net::HTTP::Put), delete: singleton(Net::HTTP::Delete)}
+
       @user_id: String
       @api_key: String
 
       def initialize: (String user_id, String api_key) -> void
-      def get: (String uri) -> untyped
-      def post: (String uri, String body, ?Hash[String, String] headers) -> untyped
-      def put: (String uri, String body, ?Hash[String, String] headers) -> untyped
-      def delete: (String uri, ?Hash[String, String] headers) -> untyped
+      def get: (String uri) -> Net::HTTPResponse
+      def post: (String uri, String body, ?Hash[String, String] headers) -> Net::HTTPResponse
+      def put: (String uri, String body, ?Hash[String, String] headers) -> Net::HTTPResponse
+      def delete: (String uri, ?Hash[String, String] headers) -> Net::HTTPResponse
 
       private
-      def request: (String uri, :delete | :get | :post | :put method, ?body: String?, ?headers: Hash[String, String]) -> untyped
+
+      def request: (String uri, :get | :post | :put | :delete method, ?body: String?, ?headers: Hash[String, String]) -> Net::HTTPResponse
     end
   end
 end
