@@ -98,14 +98,16 @@ module Hatenablog
 
   module AfterHook
     def after_hook: (Symbol hook, *Symbol methods) -> Array[Symbol]
-    def uri=: (*untyped args) -> untyped
-    def edit_uri=: (*untyped args) -> untyped
-    def author_name=: (*untyped args) -> untyped
-    def title=: (*untyped args) -> untyped
-    def content=: (*untyped args) -> untyped
-    def updated=: (*untyped args) -> untyped
-    def draft=: (*untyped args) -> untyped
-    def categories=: (*untyped args) -> untyped
+
+    # methods hooked dynamically
+    def uri=: (String uri) -> untyped
+    def edit_uri=: (String uri) -> untyped
+    def author_name=: (String author_name) -> untyped
+    def title=: (String title) -> untyped
+    def content=: (String content) -> untyped
+    def updated=: (String date) -> untyped
+    def draft=: (String draft) -> untyped
+    def categories=: (Array[String] categories) -> untyped
 
     def instance_methods: () -> untyped
     def alias_method: (untyped, untyped) -> untyped
