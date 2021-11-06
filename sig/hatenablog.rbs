@@ -24,44 +24,51 @@ module Hatenablog
     COLLECTION_URI: String
     MEMBER_URI: String
     CATEGORY_URI: String
+
     @user_id: String
     @blog_id: String
 
     attr_writer requester: Requester::Basic | Requester::OAuth
-    def self.create: (?String config_file) ?{ (Client) -> untyped } -> Client
-    def initialize: (?Configuration config) ?{ (Configuration) -> String } -> void
-    def title: -> untyped
-    def author_name: -> untyped
+
+    def self.create: (?String config_file) -> Client
+                   | (?String config_file) { (Client) -> void } -> void
+
+    def initialize: (?Configuration config) ?{ (Configuration) -> void } -> void
+    def title: () -> String
+    def author_name: () -> String
     def entries: (?Integer page) -> Entries
-    def all_entries: -> Entries
+    def all_entries: () -> Entries
     def next_feed: (?Feed feed) -> Feed?
-    def categories: -> Array[untyped]
+    def categories: () -> Array[String]
     def get_entry: (String entry_id) -> Entry
-    def post_entry: (?String title, ?String content, ?Array[untyped] categories, ?String draft) -> untyped
-    def update_entry: (String entry_id, ?String title, ?String content, ?Array[untyped] categories, ?String draft, ?String updated) -> Entry
-    def delete_entry: (String entry_id) -> untyped
-    def collection_uri: (?nil user_id, ?nil blog_id) -> String
-    def member_uri: (String entry_id, ?nil user_id, ?nil blog_id) -> String
-    def category_doc_uri: (?nil user_id, ?nil blog_id) -> String
-    def entry_xml: (?String title, ?String content, ?Array[String] categories, ?String draft, ?String? updated, ?String? author_name) -> String
+    def post_entry: (?String title, ?String content, ?Array[String] categories, ?String draft) -> Entry
+    def update_entry: (String entry_id, ?String title, ?String content, ?Array[String] categories, ?String draft, ?String updated) -> Entry
+    def delete_entry: (String entry_id) -> void
+    def collection_uri: (?String user_id, ?String blog_id) -> String
+    def member_uri: (String entry_id, ?String user_id, ?String blog_id) -> String
+    def category_doc_uri: (?String user_id, ?String blog_id) -> String
+    def entry_xml: (?String title, ?String content, ?Array[String] categories, ?String draft, ?String updated, ?String author_name) -> String
 
     private
-    def get: (String uri) -> untyped
-    def get_collection: (?String uri) -> untyped
-    def get_category_doc: -> untyped
-    def post: (String entry_xml, ?String uri) -> untyped
-    def put: (String entry_xml, String uri) -> untyped
-    def delete: (String uri) -> untyped
+
+    def get: (String uri) -> Net::HTTPResponse
+    def get_collection: (?String uri) -> Net::HTTPResponse
+    def get_category_doc: () -> Net::HTTPResponse
+    def post: (String entry_xml, ?String uri) -> Net::HTTPResponse
+    def put: (String entry_xml, String uri) -> Net::HTTPResponse
+    def delete: (String uri) -> Net::HTTPResponse
   end
 
   class Entries
     include Enumerable[Entry]
+
     @client: Client
     @page: Integer
     @fetch: :partial | :all
 
     def initialize: (Client client, ?Integer page, ?(:partial | :all) fetch) -> void
-    def each: ?{ (untyped) -> untyped } -> ((Enumerator[bot, untyped] | Enumerator[untyped, untyped])?)
+    def each: () -> Enumerator[untyped, self]
+            | () { (Entry) -> void } -> Entries
   end
 
   class Configuration < OpenStruct

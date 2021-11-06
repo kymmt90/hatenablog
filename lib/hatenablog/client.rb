@@ -161,7 +161,7 @@ module Hatenablog
             xml.name author_name
           end
           xml.content(content, type: 'text/x-markdown')
-          xml.updated updated unless updated.nil? || updated.empty?
+          xml.updated updated if updated && !updated.empty?
           categories.each do |category|
             xml.category(term: category)
           end
@@ -221,7 +221,7 @@ module Hatenablog
           feed&.entries&.each { |entry| block&.call(entry) }
         end
 
-        return
+        return self
       end
 
       current_page = 0
@@ -230,6 +230,8 @@ module Hatenablog
         feed&.entries&.each { |entry| block&.call(entry) }
         current_page += 1
       end while current_page <= @page
+
+      self
     end
   end
 end
