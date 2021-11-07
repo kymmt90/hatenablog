@@ -216,22 +216,34 @@ module Hatenablog
     def each(&block)
       return enum_for unless block_given?
 
+      # @type var block: ^(Entry) -> void
       if @fetch == :all
-        while feed = @client.next_feed(feed)
-          # @type var block: ^(Entry) -> void
-          feed&.entries&.each { |entry| block.call(entry) }
-        end
+        each_all(&block)
+      else
+        each_partial(&block)
+      end
+    end
 
-        return self
+    private
+
+    def each_all(&block)
+      feed = nil
+
+      while feed = @client.next_feed(feed)
+        feed.entries.each { |entry| block.call(entry) }
       end
 
+      self
+    end
+
+    def each_partial(&block)
+      feed = nil
+
       current_page = 0
-      begin
-        feed = @client.next_feed(feed)
-        # @type var block: ^(Entry) -> void
-        feed&.entries&.each { |entry| block.call(entry) }
+      while current_page <= @page && feed = @client.next_feed(feed)
+        feed.entries.each { |entry| block.call(entry) }
         current_page += 1
-      end while current_page <= @page
+      end
 
       self
     end

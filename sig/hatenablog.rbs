@@ -69,6 +69,11 @@ module Hatenablog
     def initialize: (Client client, ?Integer page, ?(:partial | :all) fetch) -> void
     def each: () -> Enumerator[untyped, self]
             | () { (Entry) -> void } -> Entries
+
+    private
+
+    def each_all: () { (Entry) -> void } -> Entries
+    def each_partial: () { (Entry) -> void } -> Entries
   end
 
   class Configuration < OpenStruct
