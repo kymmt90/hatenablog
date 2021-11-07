@@ -109,9 +109,11 @@ module Hatenablog
     def draft=: (String draft) -> untyped
     def categories=: (Array[String] categories) -> untyped
 
-    def instance_methods: () -> untyped
-    def alias_method: (untyped, untyped) -> untyped
-    def define_method: (untyped) { (untyped, untyped) -> untyped } -> untyped
+    # workaround for using `Module` instance methods in `after_hook`
+    def alias_method: (::Symbol | ::String new_name, ::Symbol | ::String old_name) -> ::Symbol
+    def define_method: (Symbol | String arg0, ?Proc | Method | UnboundMethod arg1) -> Symbol
+                     | (Symbol | String arg0) { () -> untyped } -> Symbol
+    def instance_methods: (?boolish include_super) -> ::Array[Symbol]
   end
 
   class Entry
