@@ -220,12 +220,14 @@ module Hatenablog
   end
 end
 
+# polyfill for ostruct
 class OpenStruct
   def initialize: (?Hash[untyped, untyped]? hash) -> OpenStruct
   def []: (String | Symbol) -> Object
   def to_h: -> Hash[Symbol, Object]
 end
 
+# polyfill for oauth
 module OAuth
   class AccessToken
     def initialize: (untyped, untyped, ?untyped) -> void
