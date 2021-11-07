@@ -218,7 +218,8 @@ module Hatenablog
 
       if @fetch == :all
         while feed = @client.next_feed(feed)
-          feed&.entries&.each { |entry| block&.call(entry) }
+          # @type var block: ^(Entry) -> void
+          feed&.entries&.each { |entry| block.call(entry) }
         end
 
         return self
@@ -227,7 +228,8 @@ module Hatenablog
       current_page = 0
       begin
         feed = @client.next_feed(feed)
-        feed&.entries&.each { |entry| block&.call(entry) }
+        # @type var block: ^(Entry) -> void
+        feed&.entries&.each { |entry| block.call(entry) }
         current_page += 1
       end while current_page <= @page
 
