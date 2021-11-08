@@ -12,6 +12,7 @@ module Hatenablog
     MEMBER_URI     = "https://blog.hatena.ne.jp/%s/%s/atom/entry/%s".freeze
     CATEGORY_URI   = "https://blog.hatena.ne.jp/%s/%s/atom/category".freeze
 
+    # @dynamic requester=
     attr_writer :requester
 
     # Create a new hatenablog AtomPub client from a configuration file.
