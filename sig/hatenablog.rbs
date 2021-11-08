@@ -238,6 +238,11 @@ module OAuth
     def initialize: (untyped, untyped, ?untyped) -> void
   end
 
+  class Consumer
+    def initialize: (untyped, untyped, ?untyped) -> void
+  end
+end
+
 # polyfill for yaml
 module YAML
   def self.load: (String yaml, ?String? filename, ?fallback: bool, ?symbolize_names: bool) -> untyped
