@@ -53,7 +53,7 @@ module Hatenablog
     end
 
     def parse_entry
-      @entries = @document.css('feed > entry').inject([]) do |entries, entry|
+      @entries = @document.css('feed > entry').inject(Array.new) do |entries, entry|
         # add namespace 'app' to recognize XML correctly
         entry['xmlns:app'] = 'http://www.w3.org/2007/app'
         entries << Hatenablog::Entry.load_xml(entry.to_s)

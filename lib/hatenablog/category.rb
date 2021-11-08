@@ -39,7 +39,7 @@ module Hatenablog
     end
 
     def parse_document
-      @categories = @document.css('atom|category').inject([]) do |categories, category|
+      @categories = @document.css('atom|category').inject(Array.new) do |categories, category|
         categories << category['term'].to_s
       end
 
