@@ -237,4 +237,8 @@ module OAuth
   class AccessToken
     def initialize: (untyped, untyped, ?untyped) -> void
   end
+
+# polyfill for yaml
+module YAML
+  def self.load: (String yaml, ?String? filename, ?fallback: bool, ?symbolize_names: bool) -> untyped
 end
