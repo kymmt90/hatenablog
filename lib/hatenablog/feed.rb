@@ -5,6 +5,7 @@ require 'hatenablog/entry'
 
 module Hatenablog
   class Feed
+    # @dynamic uri, next_uri, title, author_name, updated
     attr_reader :uri, :next_uri, :title, :author_name, :updated
 
     # Create a new blog feed from a XML string.
