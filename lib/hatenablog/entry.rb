@@ -3,6 +3,9 @@ require 'time'
 
 module Hatenablog
   module AfterHook
+    # @dynamic uri=, edit_uri=, author_name=, title=, content=, updated=, draft=, categories=
+    # @dynamic instance_methods, alias_method, define_method
+
     # Register a hooking method for given methods.
     # The hook method is executed after calling given methods.
     # @param [Symbol] hooking method name
@@ -28,8 +31,13 @@ module Hatenablog
   class Entry
     extend AfterHook
 
+    # @dynamic uri, uri=, author_name, author_name=, title, title=, content, content=, draft, draft=
     attr_accessor :uri, :author_name, :title, :content, :draft
-    attr_reader   :edit_uri, :id, :updated
+
+    # @dynamic edit_uri, id, updated
+    attr_reader :edit_uri, :id, :updated
+
+    # @dynamic categories=
     attr_writer :categories
 
     def updated=(date)
