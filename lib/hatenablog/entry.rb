@@ -20,6 +20,7 @@ module Hatenablog
         alias_method origin_method, method
 
         define_method(method) do |*args, &block|
+          # @type var block: ^(*untyped) -> untyped
           result = send(origin_method, *args, &block)
           send(hook)
           result
