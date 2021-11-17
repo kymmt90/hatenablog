@@ -12,6 +12,7 @@ module Hatenablog
     MEMBER_URI     = "https://blog.hatena.ne.jp/%s/%s/atom/entry/%s".freeze
     CATEGORY_URI   = "https://blog.hatena.ne.jp/%s/%s/atom/category".freeze
 
+    # @dynamic requester=
     attr_writer :requester
 
     # Create a new hatenablog AtomPub client from a configuration file.
@@ -24,9 +25,9 @@ module Hatenablog
       yield blog
     end
 
-    def initialize(config = nil)
+    def initialize(config = Configuration.new)
       if block_given?
-        yield config = Configuration.new
+        yield config
         config.check_valid_or_raise
       end
       @requester = Requester.create(config)
@@ -59,7 +60,7 @@ module Hatenablog
     # Get all blog entries.
     # @return [Hatenablog::Entries] enumerator of blog entries
     def all_entries
-      Entries.new(self, nil)
+      Entries.new(self, 0, :all)
     end
 
     # Get the next feed of the given feed.
@@ -161,7 +162,7 @@ module Hatenablog
             xml.name author_name
           end
           xml.content(content, type: 'text/x-markdown')
-          xml.updated updated unless updated.empty? || updated.nil?
+          xml.updated updated if updated && !updated.empty?
           categories.each do |category|
             xml.category(term: category)
           end
@@ -207,19 +208,45 @@ module Hatenablog
   class Entries
     include Enumerable
 
-    def initialize(client, page = 0)
+    def initialize(client, page = 0, fetch = :partial)
       @client = client
       @page = page
+      @fetch = fetch
     end
 
     def each(&block)
-      return enum_for(__method__) unless block_given?
+      return enum_for unless block_given?
+
+      # @type var block: ^(Entry) -> void
+      if @fetch == :all
+        each_all(&block)
+      else
+        each_partial(&block)
+      end
+    end
+
+    private
+
+    def each_all(&block)
+      feed = nil
+
+      while feed = @client.next_feed(feed)
+        feed.entries.each { |entry| block.call(entry) }
+      end
+
+      self
+    end
+
+    def each_partial(&block)
+      feed = nil
 
       current_page = 0
-      until (@page && current_page > @page) || !(feed = @client.next_feed(feed))
+      while current_page <= @page && feed = @client.next_feed(feed)
         feed.entries.each { |entry| block.call(entry) }
         current_page += 1
       end
+
+      self
     end
   end
 end

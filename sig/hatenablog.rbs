@@ -1,0 +1,249 @@
+module Hatenablog
+  VERSION: String
+
+  class Category
+    @document: Nokogiri::XML::Document
+    @categories: Array[String]
+    @fixed: String
+
+    def self.load_xml: (String xml) -> Category
+
+    def categories: () -> Array[String]
+    def each: () -> Enumerator[untyped, self]
+            | () { (String) -> void } -> Array[String]
+    def fixed?: () -> bool
+
+    private
+
+    def initialize: (String xml) -> void
+    def parse_document: () -> void
+  end
+
+  class Client
+    DEFAULT_CONFIG_PATH: String
+    COLLECTION_URI: String
+    MEMBER_URI: String
+    CATEGORY_URI: String
+
+    @user_id: String
+    @blog_id: String
+
+    attr_writer requester: Requester::Basic | Requester::OAuth
+
+    def self.create: (?String config_file) -> Client
+                   | (?String config_file) { (Client) -> void } -> void
+
+    def initialize: (?Configuration config) ?{ (Configuration) -> void } -> void
+    def title: () -> String
+    def author_name: () -> String
+    def entries: (?Integer page) -> Entries
+    def all_entries: () -> Entries
+    def next_feed: (?Feed? feed) -> Feed?
+    def categories: () -> Array[String]
+    def get_entry: (String entry_id) -> Entry
+    def post_entry: (?String title, ?String content, ?Array[String] categories, ?String draft) -> Entry
+    def update_entry: (String entry_id, ?String title, ?String content, ?Array[String] categories, ?String draft, ?String updated) -> Entry
+    def delete_entry: (String entry_id) -> void
+    def collection_uri: (?String user_id, ?String blog_id) -> String
+    def member_uri: (String entry_id, ?String user_id, ?String blog_id) -> String
+    def category_doc_uri: (?String user_id, ?String blog_id) -> String
+    def entry_xml: (?String title, ?String content, ?Array[String] categories, ?String draft, ?String updated, ?String author_name) -> String
+
+    private
+
+    def get: (String uri) -> Net::HTTPResponse
+    def get_collection: (?String uri) -> Net::HTTPResponse
+    def get_category_doc: () -> Net::HTTPResponse
+    def post: (String entry_xml, ?String uri) -> Net::HTTPResponse
+    def put: (String entry_xml, String uri) -> Net::HTTPResponse
+    def delete: (String uri) -> Net::HTTPResponse
+  end
+
+  class Entries
+    include Enumerable[Entry]
+
+    @client: Client
+    @page: Integer
+    @fetch: :partial | :all
+
+    def initialize: (Client client, ?Integer page, ?(:partial | :all) fetch) -> void
+    def each: () -> Enumerator[untyped, self]
+            | () { (Entry) -> void } -> Entries
+
+    private
+
+    def each_all: () { (Entry) -> void } -> Entries
+    def each_partial: () { (Entry) -> void } -> Entries
+  end
+
+  class Configuration < OpenStruct
+    OAUTH_KEYS: [:consumer_key, :consumer_secret, :access_token, :access_token_secret, :user_id, :blog_id]
+    BASIC_KEYS: [:api_key, :user_id, :blog_id]
+
+    def self.create: (String) -> Configuration
+    def check_valid_or_raise: () -> Configuration
+
+    # attribute accessors allowed to define dynamically
+    def consumer_key: () -> untyped # String?
+    def consumer_secret: () -> untyped # String?
+    def access_token: () -> untyped # String?
+    def access_token_secret: () -> untyped # String?
+    def user_id: () -> String
+    def blog_id: () -> String
+    def api_key: () -> untyped # String?
+    def auth_type: () -> untyped # String?
+
+    private
+
+    def lacking_keys: () -> (Array[:consumer_key | :consumer_secret | :access_token | :access_token_secret | :user_id | :blog_id | :api_key | :user_id | :blog_id])
+  end
+
+  class ConfigurationError < StandardError
+  end
+
+  module AfterHook
+    def after_hook: (Symbol hook, *Symbol methods) -> Array[Symbol]
+
+    # methods hooked dynamically
+    def uri=: (String uri) -> untyped
+    def edit_uri=: (String uri) -> untyped
+    def author_name=: (String author_name) -> untyped
+    def title=: (String title) -> untyped
+    def content=: (String content) -> untyped
+    def updated=: (String date) -> untyped
+    def draft=: (String draft) -> untyped
+    def categories=: (Array[String] categories) -> untyped
+
+    # workaround for using `Module` instance methods in `after_hook`
+    def alias_method: (::Symbol | ::String new_name, ::Symbol | ::String old_name) -> ::Symbol
+    def define_method: (Symbol | String arg0, ?Proc | Method | UnboundMethod arg1) -> Symbol
+                     | (Symbol | String arg0) { () -> untyped } -> Symbol
+    def instance_methods: (?boolish include_super) -> ::Array[Symbol]
+  end
+
+  class Entry
+    extend AfterHook
+
+    @document: Nokogiri::XML::Document
+    @formatted_content: untyped
+
+    attr_accessor uri: String
+    attr_accessor author_name: String
+    attr_accessor title: String
+    attr_accessor content: String
+    attr_accessor draft: String
+
+    attr_reader edit_uri: String
+    attr_reader id: String?
+    attr_reader updated : Time?
+
+    attr_writer categories: Array[String]
+
+    def self.load_xml: (String xml) -> Entry
+    def self.create: (?uri: String, ?edit_uri: String, ?author_name: String, ?title: String, ?content: String, ?draft: String, ?categories: Array[String], ?updated: String) ?{ (Entry) -> void } -> Entry
+    def self.build_xml: (String uri, String edit_uri, String author_name, String title, String content, String draft, Array[String]? categories, String? updated) -> String
+
+    def updated=: (String date) -> Time?
+    def edit_uri=: (String uri) -> void
+    def draft?: () -> bool
+    def categories: () -> Array[String]
+    def each_category: () { (String) -> void } -> Array[String]
+    def to_xml: () -> String
+    def formatted_content: () -> untyped # result of Nokogiri::XML::NodeSet#[]
+
+    private
+
+    def initialize: (String xml) -> void
+    def parse_document: () -> void
+    def parse_categories: () -> Array[untyped]
+    def update_xml: () -> void
+    def categories_modified?: (Nokogiri::XML::NodeSet old_categories, Array[String] new_categories) -> bool
+  end
+
+  class Feed
+    @document: Nokogiri::XML::Document
+    @entries: Array[Entry]
+
+    attr_reader uri: String
+    attr_reader next_uri: String
+    attr_reader title: String
+    attr_reader author_name: String
+    attr_reader updated: Time
+
+    def self.load_xml: (String xml) -> Feed
+
+    def entries: () -> Array[Entry]
+    def each_entry: () { (Entry) -> void } -> Array[Entry]
+    def has_next?: () -> bool
+
+    private
+
+    def initialize: (String xml) -> void
+    def parse_document: () -> void
+    def parse_entry: () -> void
+  end
+
+  module Requester
+    ATOM_CONTENT_TYPE: String
+    DEFAULT_HEADER: Hash[String, String]
+
+    def self.create: (Configuration config) -> (Basic | OAuth)
+
+    class RequestError < StandardError
+    end
+
+    class OAuth
+      @access_token: ::OAuth::AccessToken
+
+      def initialize: (::OAuth::AccessToken access_token) -> void
+      def get: (String uri) -> Net::HTTPResponse
+      def post: (String uri, ?String body, ?Hash[String, String] headers) -> Net::HTTPResponse
+      def put: (String uri, ?String body, ?Hash[String, String] headers) -> Net::HTTPResponse
+      def delete: (String uri, ?Hash[String, String] headers) -> Net::HTTPResponse
+
+      private
+
+      def request: (:get | :post | :put | :delete method, String uri, ?body: String?, ?headers: Hash[String, String]?) -> Net::HTTPResponse
+    end
+
+    class Basic
+      METHODS: {get: singleton(Net::HTTP::Get), post: singleton(Net::HTTP::Post), put: singleton(Net::HTTP::Put), delete: singleton(Net::HTTP::Delete)}
+
+      @user_id: String
+      @api_key: String
+
+      def initialize: (String user_id, String api_key) -> void
+      def get: (String uri) -> Net::HTTPResponse
+      def post: (String uri, String body, ?Hash[String, String] headers) -> Net::HTTPResponse
+      def put: (String uri, String body, ?Hash[String, String] headers) -> Net::HTTPResponse
+      def delete: (String uri, ?Hash[String, String] headers) -> Net::HTTPResponse
+
+      private
+
+      def request: (String uri, :get | :post | :put | :delete method, ?body: String?, ?headers: Hash[String, String]) -> Net::HTTPResponse
+    end
+  end
+end
+
+# polyfill for ostruct
+class OpenStruct
+  def initialize: (?Hash[untyped, untyped]? hash) -> OpenStruct
+  def []: (String | Symbol) -> Object
+  def to_h: -> Hash[Symbol, Object]
+end
+
+# polyfill for oauth
+module OAuth
+  class AccessToken
+    def initialize: (untyped, untyped, ?untyped) -> void
+  end
+
+  class Consumer
+    def initialize: (untyped, untyped, ?untyped) -> void
+  end
+end
+
+# polyfill for yaml
+module YAML
+  def self.load: (String yaml, ?String? filename, ?fallback: bool, ?symbolize_names: bool) -> untyped
+end

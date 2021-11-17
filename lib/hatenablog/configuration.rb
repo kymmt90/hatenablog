@@ -4,6 +4,8 @@ require 'ostruct'
 
 module Hatenablog
   class Configuration < OpenStruct
+    # @dynamic auth_type, consumer_key, consumer_secret, access_token, access_token_secret, api_key, user_id, blog_id
+
     OAUTH_KEYS = %i(consumer_key consumer_secret access_token access_token_secret user_id blog_id)
     BASIC_KEYS = %i(api_key user_id blog_id)
 

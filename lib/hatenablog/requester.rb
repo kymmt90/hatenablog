@@ -96,7 +96,7 @@ module Hatenablog
       # @param [string] body HTTP request body
       # @param [string] headers HTTP request headers
       # @return [Net::HTTPResponse] HTTP response
-      def post(uri, body, headers = nil)
+      def post(uri, body, headers = {})
         request(uri, :post, body: body, headers: headers)
       end
 
@@ -105,7 +105,7 @@ module Hatenablog
       # @param [string] body HTTP request body
       # @param [string] headers HTTP request headers
       # @return [Net::HTTPResponse] HTTP response
-      def put(uri, body, headers = nil )
+      def put(uri, body, headers = {})
         request(uri, :put, body: body, headers: headers)
       end
 
@@ -113,22 +113,27 @@ module Hatenablog
       # @param [string] uri target URI
       # @param [string] headers HTTP request headers
       # @return [Net::HTTPResponse] HTTP response
-      def delete(uri, headers = nil)
+      def delete(uri, headers = {})
         request(uri, :delete, headers: headers)
       end
 
       private
-      def request(uri, method, body: nil, headers: nil)
+
+      def request(uri, method, body: nil, headers: {})
         uri = URI(uri)
-        req = METHODS[method].new(uri, headers)
+        req = METHODS[method].new(uri.to_s, headers)
         req.basic_auth @user_id, @api_key
         if body
           req.body = body
           req.content_type = ATOM_CONTENT_TYPE
         end
 
-        http = Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.port == 443)
-        http.request(req)
+        http = Net::HTTP.new(uri.hostname, uri.port)
+        http.use_ssl = uri.port == 443
+        http.start do |conn|
+          conn.request(req)
+        end
+        
       rescue => problem
         raise RequestError, "Fail to #{method.upcase}: " + problem.to_s
       end

@@ -5,6 +5,7 @@ require 'hatenablog/entry'
 
 module Hatenablog
   class Feed
+    # @dynamic uri, next_uri, title, author_name, updated
     attr_reader :uri, :next_uri, :title, :author_name, :updated
 
     # Create a new blog feed from a XML string.
@@ -53,7 +54,7 @@ module Hatenablog
     end
 
     def parse_entry
-      @entries = @document.css('feed > entry').inject([]) do |entries, entry|
+      @entries = @document.css('feed > entry').inject(Array.new) do |entries, entry|
         # add namespace 'app' to recognize XML correctly
         entry['xmlns:app'] = 'http://www.w3.org/2007/app'
         entries << Hatenablog::Entry.load_xml(entry.to_s)

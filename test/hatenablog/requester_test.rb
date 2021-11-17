@@ -52,7 +52,6 @@ module Hatenablog
     end
 
     sub_test_case 'Basic' do
-      BASIC = Hatenablog::Requester::Basic
       URL = 'http://www.example.com'
 
       test 'get' do
@@ -98,21 +97,16 @@ module Hatenablog
       def setup_basic_auth(error: false)
         user_id = 'test_user'
         api_key = 'sukw9e87fg'
-        @sut = BASIC.new(user_id, api_key)
+        @sut = Hatenablog::Requester::Basic.new(user_id, api_key)
 
-        stub(Net::HTTP).start do
-          http = Object.new
-          # return Request object or Error
-          stub(http).request do |req|
-            if error
-              raise 'problem'
-            else
-              req
-            end
+        any_instance_of(Net::HTTP) do |http|
+          if error
+            stub(http).request { raise 'problem' }
+          else
+            stub(http).request { |req| req }
           end
         end
       end
-
     end
   end
 end

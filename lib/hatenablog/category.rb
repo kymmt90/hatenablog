@@ -16,9 +16,10 @@ module Hatenablog
     end
 
     def each(&block)
-      return enum_for(__method__) unless block_given?
+      return enum_for unless block_given?
 
       @categories.each do |category|
+        # @type var block: ^(String) -> void
         block.call(category)
       end
     end
@@ -38,7 +39,7 @@ module Hatenablog
     end
 
     def parse_document
-      @categories = @document.css('atom|category').inject([]) do |categories, category|
+      @categories = @document.css('atom|category').inject(Array.new) do |categories, category|
         categories << category['term'].to_s
       end
 

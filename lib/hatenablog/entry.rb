@@ -3,6 +3,9 @@ require 'time'
 
 module Hatenablog
   module AfterHook
+    # @dynamic uri=, edit_uri=, author_name=, title=, content=, updated=, draft=, categories=
+    # @dynamic instance_methods, alias_method, define_method
+
     # Register a hooking method for given methods.
     # The hook method is executed after calling given methods.
     # @param [Symbol] hooking method name
@@ -17,6 +20,7 @@ module Hatenablog
         alias_method origin_method, method
 
         define_method(method) do |*args, &block|
+          # @type var block: ^(*untyped) -> untyped
           result = send(origin_method, *args, &block)
           send(hook)
           result
@@ -28,8 +32,13 @@ module Hatenablog
   class Entry
     extend AfterHook
 
+    # @dynamic uri, uri=, author_name, author_name=, title, title=, content, content=, draft, draft=
     attr_accessor :uri, :author_name, :title, :content, :draft
-    attr_reader   :edit_uri, :id, :updated
+
+    # @dynamic edit_uri, id, updated
+    attr_reader :edit_uri, :id, :updated
+
+    # @dynamic categories=
     attr_writer :categories
 
     def updated=(date)
@@ -147,7 +156,7 @@ module Hatenablog
     end
 
     def parse_categories
-      categories = @document.css('category').inject([]) do |categories, category|
+      categories = @document.css('category').inject(Array.new) do |categories, category|
         categories << category['term'].to_s
       end
       categories
@@ -162,7 +171,7 @@ module Hatenablog
       @document.at_css('entry app|control app|draft').content = @draft
 
       unless @updated.nil? || @document.at_css('entry updated').nil?
-        @document.at_css('entry updated').content = @updated.iso8601
+        @document.at_css('entry updated').content = @updated&.iso8601
       end
 
       unless @categories.nil?

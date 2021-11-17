@@ -1,6 +1,10 @@
 name: build
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
 
 jobs:
   build:
@@ -12,22 +16,33 @@ jobs:
           - ruby: '3.0'
             report-coverage: true
     steps:
-    - uses: actions/checkout@v2
-    - uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: ${{ matrix.ruby }}
-    - run: gem install bundler
-    - run: bundle install -j4
-    - name: Run tests and report test coverage
-      if: matrix.report-coverage
-      uses: paambaati/codeclimate-action@v2.7.5
-      env:
-        CC_TEST_REPORTER_ID: 309cf0784d00d2a6009566d28be111a8a0280cdeb2da280225eedf577b16beb5
-      with:
-        coverageCommand: bundle exec rake
-        coverageLocations: ${{github.workspace}}/coverage/coverage.json:simplecov
-    - name: Run tests
-      if: "!matrix.report-coverage"
-      env:
-        TZ: Asia/Tokyo
-      run: bundle exec rake
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+      - run: gem install bundler
+      - run: bundle install -j4
+      - name: Run tests and report test coverage
+        if: matrix.report-coverage
+        uses: paambaati/codeclimate-action@v2.7.5
+        env:
+          CC_TEST_REPORTER_ID: 309cf0784d00d2a6009566d28be111a8a0280cdeb2da280225eedf577b16beb5
+        with:
+          coverageCommand: bundle exec rake
+          coverageLocations: ${{github.workspace}}/coverage/coverage.json:simplecov
+      - name: Run tests
+        if: "!matrix.report-coverage"
+        env:
+          TZ: Asia/Tokyo
+        run: bundle exec rake
+  steep:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'true'
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0'
+      - run: bundle install -j4
+      - run: bundle exec steep check
