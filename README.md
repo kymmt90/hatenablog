@@ -41,7 +41,7 @@ Access [Hatena application registoration page](http://developer.hatena.ne.jp/) a
 
 Execute this command:
 
-    $ get_access_token <your consumer key> <your consumer secret>
+    $ get_hatena_oauth_access_token <your consumer key> <your consumer secret>
     Visit this website and get the PIN: https://www.hatena.com/oauth/authorize?oauth_token=XXXXXXXXXXXXXXXXXXXX
     Enter the PIN: <your PIN> [Enter]
     Access token: <your access token>
