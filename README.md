@@ -164,7 +164,7 @@ feed.uri
 feed.next_uri    # The next feed URI
 feed.title
 feed.author_name
-feed.update      # Updated datetime
+feed.updated     # Updated datetime
 
 feed.entries # entries in the feed
 feed.each_entry do |entry|
