@@ -34,3 +34,4 @@ Gemfile.lock
 
 # unless supporting rvm < 1.11.0 or doing something fancy, ignore this:
 .rvmrc
+/.gem_rbs_collection/

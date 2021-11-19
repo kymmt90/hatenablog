@@ -45,4 +45,5 @@ jobs:
         with:
           ruby-version: '3.0'
       - run: bundle install -j4
+      - run: rbs collection install
       - run: bundle exec steep check

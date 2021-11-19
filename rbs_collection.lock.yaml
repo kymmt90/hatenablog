@@ -1,0 +1,36 @@
+---
+sources:
+- name: ruby/gem_rbs_collection
+  remote: https://github.com/ruby/gem_rbs_collection.git
+  revision: main
+  repo_dir: gems
+path: ".gem_rbs_collection"
+gems:
+- name: erb
+  version: '0'
+  source:
+    type: stdlib
+- name: net-http
+  version: '0'
+  source:
+    type: stdlib
+- name: set
+  version: '0'
+  source:
+    type: stdlib
+- name: time
+  version: '0'
+  source:
+    type: stdlib
+- name: uri
+  version: '0'
+  source:
+    type: stdlib
+- name: nokogiri
+  version: '1.11'
+  source:
+    type: git
+    name: ruby/gem_rbs_collection
+    revision: 88e86e0b67262f9ab6244a356e81dd9ca8c55b37
+    remote: https://github.com/ruby/gem_rbs_collection.git
+    repo_dir: gems
