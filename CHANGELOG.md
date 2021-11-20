@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+## 0.8.0 - 2021-11-20
+
 ### Added
 
 - [Create the signature with RBS](https://github.com/kymmt90/hatenablog/pull/24)
