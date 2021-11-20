@@ -19,15 +19,21 @@ This gem supports following operations through OAuth 1.0a or Basic authenticatio
 
 Add this line to your application's Gemfile:
 
-    gem 'hatenablog'
+```
+gem 'hatenablog'
+```
 
 And then execute:
 
-    $ bundle
+```
+$ bundle
+```
 
 Or install it yourself as:
 
-    $ gem install hatenablog
+```
+$ gem install hatenablog
+```
 
 ### Get OAuth credentials
 
@@ -41,11 +47,13 @@ Access [Hatena application registoration page](http://developer.hatena.ne.jp/) a
 
 Execute this command:
 
-    $ get_hatena_oauth_access_token <your consumer key> <your consumer secret>
-    Visit this website and get the PIN: https://www.hatena.com/oauth/authorize?oauth_token=XXXXXXXXXXXXXXXXXXXX
-    Enter the PIN: <your PIN> [Enter]
-    Access token: <your access token>
-    Access token secret: <your access token secret>
+```
+$ get_hatena_oauth_access_token <your consumer key> <your consumer secret>
+Visit this website and get the PIN: https://www.hatena.com/oauth/authorize?oauth_token=XXXXXXXXXXXXXXXXXXXX
+Enter the PIN: <your PIN> [Enter]
+Access token: <your access token>
+Access token secret: <your access token secret>
+```
 
 #### 3. [Optional] Set up the YAML configuration file
 
