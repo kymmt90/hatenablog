@@ -93,9 +93,10 @@ module Hatenablog
     # @param [String] content entry content
     # @param [Array] categories entry categories
     # @param [String] draft this entry is draft if 'yes', otherwise it is not draft
+    # @param [String] updated entry updated datetime (ISO 8601)
     # @return [Hatenablog::BlogEntry] posted entry
-    def post_entry(title = '', content = '', categories = [], draft = 'no')
-      entry_xml = entry_xml(title, content, categories, draft)
+    def post_entry(title = '', content = '', categories = [], draft = 'no', updated = '')
+      entry_xml = entry_xml(title, content, categories, draft, updated)
       response = post(entry_xml)
       Entry.load_xml(response.body)
     end
