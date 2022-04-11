@@ -194,7 +194,8 @@ entry = client.post_entry(
   'Example Title',                  # title
   'This is the **example** entry.', # content
   ['Ruby', 'Rails'],                # categories
-  'yes'                             # draft
+  'yes',                            # draft
+  '2022-04-11T15:43:20+09:00'       # updated
 )
 entry.id
 entry.uri
