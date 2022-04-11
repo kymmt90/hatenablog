@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+## 0.9.0 - 2022-04-11
+
+### Added
+
+- [feat: Add `updated` parameter to post_entry](https://github.com/kymmt90/hatenablog/pull/29)
+
 ## 0.8.0 - 2021-11-20
 
 ### Added
