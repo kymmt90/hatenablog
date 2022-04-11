@@ -41,7 +41,7 @@ module Hatenablog
     def next_feed: (?Feed? feed) -> Feed?
     def categories: () -> Array[String]
     def get_entry: (String entry_id) -> Entry
-    def post_entry: (?String title, ?String content, ?Array[String] categories, ?String draft) -> Entry
+    def post_entry: (?String title, ?String content, ?Array[String] categories, ?String draft, ?String updated) -> Entry
     def update_entry: (String entry_id, ?String title, ?String content, ?Array[String] categories, ?String draft, ?String updated) -> Entry
     def delete_entry: (String entry_id) -> void
     def collection_uri: (?String user_id, ?String blog_id) -> String
