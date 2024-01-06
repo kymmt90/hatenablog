@@ -11,16 +11,25 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby: ['2.6', '2.7', '3.0', '3.1.0-preview1']
+        ruby: ['2.6', '2.7', '3.0', '3.1', '3.2', '3.3']
         include:
-          - ruby: '3.0'
+          - ruby: '2.6'
+            bundler-version: '2.4.22'
+          - ruby: '2.7'
+            bundler-version: '2.4.22'
+          - ruby: '3.3'
             report-coverage: true
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-      - run: gem install bundler
+      - name: Install old Bundler
+        if: matrix.bundler-version
+        run: gem install bundler -v ${{ matrix.bundler-version }}
+      - name: Install Bundler
+        if: "!matrix.bundler-version"
+        run: gem install bundler
       - run: bundle install -j4
       - name: Run tests and report test coverage
         if: matrix.report-coverage
