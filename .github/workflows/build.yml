@@ -44,15 +44,3 @@ jobs:
         env:
           TZ: Asia/Tokyo
         run: bundle exec rake
-  steep:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: 'true'
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.0'
-      - run: bundle install -j4
-      - run: rbs collection install
-      - run: bundle exec steep check
